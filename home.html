@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📚 AniBooks - Anime Book World</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #ff6b9d;
+    --purple: #c084fc;
+    --blue: #60a5fa;
+    --dark: #0d0d1a;
+    --darker: #070710;
+    --card: #13132a;
+    --green: #34d399;
+    --glow-pink: 0 0 20px #ff6b9d88;
+    --glow-purple: 0 0 20px #c084fc88;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--darker);
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    width: 20px; height: 20px;
+    border: 2px solid var(--pink);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s, background 0.2s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-dot {
+    width: 6px; height: 6px;
+    background: var(--pink);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+  }
+  body:hover .cursor { background: #ff6b9d22; }
+
+  /* Stars Background */
+  .stars {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .star {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+  }
+
+  /* Floating particles */
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1;
+    font-size: 1.2rem;
+    animation: floatUp 8s infinite linear;
+    opacity: 0;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; width: 100%;
+    z-index: 100;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, #070710ee, transparent);
+    backdrop-filter: blur(10px);
+  }
+  .logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, var(--pink), var(--purple), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+    animation: logoGlow 3s ease-in-out infinite;
+  }
+  @keyframes logoGlow {
+    0%, 100% { filter: drop-shadow(0 0 8px #ff6b9d); }
+    50% { filter: drop-shadow(0 0 20px #c084fc); }
+  }
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-links a {
+    color: #ccc;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 2px;
+    background: var(--pink);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--pink); }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, #c084fc22 0%, transparent 70%),
+                radial-gradient(ellipse at 20% 80%, #ff6b9d22 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, #60a5fa22 0%, transparent 50%);
+  }
+  .hero-content { position: relative; z-index: 2; }
+
+  .hero-emoji {
+    font-size: 5rem;
+    display: block;
+    animation: bounce 2s ease-in-out infinite;
+    margin-bottom: 1rem;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  h1 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #fff 0%, var(--pink) 40%, var(--purple) 70%, var(--blue) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: fadeInDown 1s ease;
+  }
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero p {
+    font-size: 1.2rem;
+    color: #aaa;
+    margin-bottom: 2rem;
+    animation: fadeInUp 1s ease 0.3s both;
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .search-bar {
+    display: flex;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+    background: var(--card);
+    border: 1px solid #ff6b9d44;
+    border-radius: 50px;
+    overflow: hidden;
+    animation: fadeInUp 1s ease 0.5s both;
+    box-shadow: var(--glow-pink);
+  }
+  .search-bar input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    background: none;
+    border: none;
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    outline: none;
+  }
+  .search-bar input::placeholder { color: #666; }
+  .search-bar button {
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: transform 0.2s;
+  }
+  .search-bar button:hover { transform: scale(1.05); }
+
+  .hero-btns {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeInUp 1s ease 0.7s both;
+  }
+  .btn {
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    border: none;
+    color: white;
+    box-shadow: var(--glow-pink);
+  }
+  .btn-primary:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 0 30px #ff6b9daa; }
+  .btn-outline {
+    background: transparent;
+    border: 2px solid var(--purple);
+    color: var(--purple);
+  }
+  .btn-outline:hover { background: var(--purple); color: white; transform: translateY(-3px); }
+
+  /* SECTION */
+  section {
+    position: relative;
+    z-index: 2;
+    padding: 5rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .section-title h2 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  .section-title p { color: #888; }
+
+  /* CATEGORY PILLS */
+  .categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+  }
+  .cat-pill {
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    border: 1px solid #333;
+    background: var(--card);
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+  }
+  .cat-pill:hover, .cat-pill.active {
+    border-color: var(--pink);
+    color: var(--pink);
+    box-shadow: var(--glow-pink);
+    background: #ff6b9d11;
+  }
+
+  /* BOOK GRID */
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+  .book-card {
+    background: var(--card);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #ffffff11;
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+    group: true;
+  }
+  .book-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--pink);
+    box-shadow: var(--glow-pink);
+  }
+  .book-cover {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .book-card:nth-child(1) .book-cover { background: linear-gradient(135deg, #1a1a2e, #16213e); }
+  .book-card:nth-child(2) .book-cover { background: linear-gradient(135deg, #2d1b69, #11998e); }
+  .book-card:nth-child(3) .book-cover { background: linear-gradient(135deg, #3d0c02, #c31432); }
+  .book-card:nth-child(4) .book-cover { background: linear-gradient(135deg, #0f3443, #34e89e); }
+  .book-card:nth-child(5) .book-cover { background: linear-gradient(135deg, #360033, #0b8793); }
+  .book-card:nth-child(6) .book-cover { background: linear-gradient(135deg, #1a1a1a, #4a0e0e); }
+
+  .book-badge {
+    position: absolute;
+    top: 10px; right: 10px;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+  .badge-free { background: #10b98122; color: #10b981; border: 1px solid #10b981; }
+  .badge-new { background: #ff6b9d22; color: #ff6b9d; border: 1px solid #ff6b9d; }
+
+  .book-info { padding: 1rem; }
+  .book-info h3 { font-size: 1rem; margin-bottom: 0.3rem; color: #fff; }
+  .book-info p { font-size: 0.8rem; color: #888; margin-bottom: 0.8rem; }
+  .book-info .stars-rating { color: #fbbf24; font-size: 0.8rem; margin-bottom: 0.8rem; }
+  .book-btn {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    transition: transform 0.2s;
+  }
+  .book-btn:hover { transform: scale(1.02); }
+
+  /* FEATURES */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  .feature-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid #ffffff11;
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, var(--pink)11 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .feature-card:hover::before { opacity: 1; }
+  .feature-card:hover { border-color: var(--pink); transform: translateY(-5px); }
+  .feature-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
+  .feature-card h3 { color: var(--pink); margin-bottom: 0.5rem; font-size: 1.1rem; }
+  .feature-card p { color: #888; font-size: 0.9rem; line-height: 1.6; }
+
+  /* STATS */
+  .stats-bar {
+    background: linear-gradient(135deg, #13132a, #1a0a2e);
+    border: 1px solid #ff6b9d22;
+    border-radius: 20px;
+    padding: 2rem;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 2rem 0;
+    box-shadow: var(--glow-purple);
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 2rem;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .stat-label { color: #888; font-size: 0.9rem; }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 3rem 2rem;
+    border-top: 1px solid #ffffff11;
+    color: #555;
+  }
+  footer .footer-logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Sakura petals effect on load */
+  @keyframes sakuraFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+
+<!-- Floating Particles -->
+<div id="particles"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">📚 AniBooks</div>
+  <div class="nav-links">
+    <a href="#books">Books</a>
+    <a href="manga.html">🎌 Manga</a>
+    <a href="#features">Features</a>
+    <a href="#about">About</a>
+    <a href="wishlist.html">🔖 Wishlist</a>
+    <a href="coupons.html">🎁 Coupons</a>
+    <a href="sell.html" style="color: var(--green); font-weight: 800;">💰 Becho</a>
+    <a href="dashboard.html" style="color: var(--blue); font-weight: 800;">📊 Dashboard</a>
+    <a href="login.html" style="background: linear-gradient(135deg, var(--pink), var(--purple)); padding: 0.4rem 1rem; border-radius: 20px; color: white; font-weight: 800;">🔐 Login</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <span class="hero-emoji">🌸</span>
+    <h1>AniBooks<br>World</h1>
+    <p>Anime style mein padho hazaron free books 📖✨</p>
+    <div class="search-bar">
+      <input type="text" placeholder="🔍 Book dhundo..." id="searchInput">
+      <button onclick="searchBook()">🔍</button>
+    </div>
+    <div class="hero-btns">
+      <a href="#books" class="btn btn-primary">📚 Books Dekho</a>
+      <a href="#features" class="btn btn-outline">✨ Features</a>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<section>
+  <div class="stats-bar reveal">
+    <div class="stat">
+      <div class="stat-num">10K+</div>
+      <div class="stat-label">Free Books</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">50K+</div>
+      <div class="stat-label">Readers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Free Access</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">Available</div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKS -->
+<section id="books">
+  <div class="section-title reveal">
+    <h2>🌟 Popular Books</h2>
+    <p>Free mein download karo, padho aur enjoy karo!</p>
+  </div>
+
+  <div class="categories reveal">
+    <div class="cat-pill active" onclick="filterCat(this)">All ✨</div>
+    <div class="cat-pill" onclick="filterCat(this)">📖 Hindi</div>
+    <div class="cat-pill" onclick="filterCat(this)">🌏 English</div>
+    <div class="cat-pill" onclick="filterCat(this)">📚 NCERT</div>
+    <div class="cat-pill" onclick="filterCat(this)">🎭 Classic</div>
+    <div class="cat-pill" onclick="filterCat(this)">🔬 Science</div>
+  </div>
+
+  <div class="book-grid reveal">
+    <div class="book-card">
+      <div class="book-cover">
+        📜
+        <span class="book-badge badge-free">FREE</span>
+      </div>
+      <div class="book-info">
+        <h3>Godan - Premchand</h3>
+        <p>Munshi Premchand</p>
+        <div class="stars-rating">⭐⭐⭐⭐⭐ 4.9</div>
+        <button class="book-btn" onclick="downloadBook('https://www.gutenberg.org')">📥 Download</button>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <div class="book-cover">
+        🌙
+        <span class="book-badge badge-free">FREE</span>
+      </div>
+      <div class="book-info">
+        <h3>Pride & Prejudice</h3>
+        <p>Jane Austen</p>
+        <div class="stars-rating">⭐⭐⭐⭐⭐ 4.8</div>
+        <button class="book-btn" onclick="downloadBook('https://www.gutenberg.org/ebooks/1342')">📥 Download</button>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <div class="book-cover">
+        🔥
+        <span class="book-badge badge-new">NEW</span>
+      </div>
+      <div class="book-info">
+        <h3>NCERT Science 10</h3>
+        <p>NCERT</p>
+        <div class="stars-rating">⭐⭐⭐⭐ 4.5</div>
+        <button class="book-btn" onclick="downloadBook('https://ncert.nic.in')">📥 Download</button>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <div class="book-cover">
+        ⚡
+        <span class="book-badge badge-free">FREE</span>
+      </div>
+      <div class="book-info">
+        <h3>Sherlock Holmes</h3>
+        <p>Arthur Conan Doyle</p>
+        <div class="stars-rating">⭐⭐⭐⭐⭐ 4.9</div>
+        <button class="book-btn" onclick="downloadBook('https://www.gutenberg.org/ebooks/1661')">📥 Download</button>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <div class="book-cover">
+        🌸
+        <span class="book-badge badge-free">FREE</span>
+      </div>
+      <div class="book-info">
+        <h3>Nirmala</h3>
+        <p>Munshi Premchand</p>
+        <div class="stars-rating">⭐⭐⭐⭐ 4.7</div>
+        <button class="book-btn" onclick="downloadBook('https://archive.org')">📥 Download</button>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <div class="book-cover">
+        🗡️
+        <span class="book-badge badge-new">NEW</span>
+      </div>
+      <div class="book-info">
+        <h3>Romeo & Juliet</h3>
+        <p>William Shakespeare</p>
+        <div class="stars-rating">⭐⭐⭐⭐ 4.6</div>
+        <button class="book-btn" onclick="downloadBook('https://www.gutenberg.org/ebooks/1112')">📥 Download</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-title reveal">
+    <h2>✨ Features</h2>
+    <p>Kyun AniBooks best hai?</p>
+  </div>
+  <div class="features-grid reveal">
+    <div class="feature-card">
+      <span class="feature-icon">🆓</span>
+      <h3>100% Free</h3>
+      <p>Saari books bilkul free mein padho, koi payment nahi</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📱</span>
+      <h3>Mobile Friendly</h3>
+      <p>Phone, tablet, laptop - sab pe perfectly kaam karta hai</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🌸</span>
+      <h3>Anime Style</h3>
+      <p>Beautiful anime theme ke saath padhai karo mazze se</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">⚡</span>
+      <h3>Fast Download</h3>
+      <p>Super fast download - seconds mein book haath mein</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔍</span>
+      <h3>Easy Search</h3>
+      <p>Koi bhi book asaani se dhundo seconds mein</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🌏</span>
+      <h3>Hindi + English</h3>
+      <p>Dono languages mein hazaron books available hain</p>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-title reveal">
+    <h2>🎌 About AniBooks</h2>
+  </div>
+  <div class="stats-bar reveal" style="flex-direction: column; text-align: center;">
+    <p style="color: #aaa; font-size: 1.1rem; line-height: 1.8; max-width: 600px; margin: 0 auto;">
+      AniBooks ek free book website hai jahan tum hazaron <strong style="color: var(--pink)">Hindi aur English</strong> books bilkul <strong style="color: var(--purple)">free</strong> mein padh aur download kar sakte ho. 
+      Sari books <strong style="color: var(--blue)">legal aur copyright-free</strong> hain. 
+      Padhai ko fun banao anime style ke saath! 🌸
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">📚 AniBooks</div>
+  <p style="margin-bottom: 0.5rem;">Free books, anime style mein ✨</p>
+  <p style="font-size: 0.8rem;">Sources: Project Gutenberg • Archive.org • NCERT</p>
+  <p style="margin-top: 1rem; font-size: 0.8rem; color: #333;">Made with 💖 | Sari books legal aur free hain</p>
+</footer>
+
+<script>
+// Custom Cursor
+const cursor = document.getElementById('cursor');
+const dot = document.getElementById('cursorDot');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+  dot.style.left = e.clientX + 'px';
+  dot.style.top = e.clientY + 'px';
+});
+
+// Stars
+const starsContainer = document.getElementById('stars');
+for (let i = 0; i < 150; i++) {
+  const star = document.createElement('div');
+  star.className = 'star';
+  star.style.left = Math.random() * 100 + '%';
+  star.style.top = Math.random() * 100 + '%';
+  star.style.animationDelay = Math.random() * 3 + 's';
+  star.style.animationDuration = (2 + Math.random() * 3) + 's';
+  starsContainer.appendChild(star);
+}
+
+// Floating Particles
+const emojis = ['🌸', '⭐', '✨', '🌙', '💫', '📚', '🎋', '🌺'];
+const particlesContainer = document.getElementById('particles');
+for (let i = 0; i < 15; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+  p.style.left = Math.random() * 100 + '%';
+  p.style.animationDelay = Math.random() * 8 + 's';
+  p.style.animationDuration = (6 + Math.random() * 6) + 's';
+  particlesContainer.appendChild(p);
+}
+
+// Scroll Reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+reveals.forEach(r => observer.observe(r));
+
+// Category Filter
+function filterCat(el) {
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Search
+function searchBook() {
+  const q = document.getElementById('searchInput').value;
+  if (q) window.open('https://www.gutenberg.org/search/?query=' + encodeURIComponent(q), '_blank');
+}
+document.getElementById('searchInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') searchBook();
+});
+
+// Download
+function downloadBook(url) {
+  window.open(url, '_blank');
+}
+
+// Cursor click effect
+document.addEventListener('click', e => {
+  const spark = document.createElement('div');
+  spark.style.cssText = `
+    position: fixed; left: ${e.clientX}px; top: ${e.clientY}px;
+    font-size: 1.5rem; pointer-events: none; z-index: 9999;
+    animation: sparkle 0.6s ease forwards;
+    transform: translate(-50%, -50%);
+  `;
+  spark.textContent = '✨';
+  document.body.appendChild(spark);
+  setTimeout(() => spark.remove(), 600);
+});
+
+// Add sparkle keyframe
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes sparkle {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0); }
+    50% { opacity: 1; transform: translate(-50%, -80%) scale(1.5); }
+    100% { opacity: 0; transform: translate(-50%, -120%) scale(0.5); }
+  }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>

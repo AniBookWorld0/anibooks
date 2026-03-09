@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔐 AniBooks - Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #ff6b9d;
+    --purple: #c084fc;
+    --blue: #60a5fa;
+    --green: #34d399;
+    --dark: #0d0d1a;
+    --darker: #070710;
+    --card: #13132a;
+    --card2: #1a1a35;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--darker);
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  /* Stars */
+  .stars { position: fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+  .star { position:absolute; width:2px; height:2px; background:white; border-radius:50%; animation: twinkle 3s infinite; }
+  @keyframes twinkle { 0%,100%{opacity:0.2;} 50%{opacity:1;} }
+
+  /* BG Glow */
+  .bg-glow {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 30% 50%, #ff6b9d22 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, #c084fc22 0%, transparent 60%);
+  }
+
+  nav {
+    position: relative; z-index: 10;
+    padding: 1.2rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #ffffff11;
+    background: #070710cc; backdrop-filter: blur(10px);
+  }
+  .logo {
+    font-family: 'Cinzel Decorative', serif; font-size: 1.3rem;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .nav-back { color:#aaa; text-decoration:none; font-weight:600; transition:color 0.3s; }
+  .nav-back:hover { color: var(--pink); }
+
+  .main {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 2rem; position: relative; z-index: 2;
+  }
+
+  .auth-box {
+    background: var(--card);
+    border-radius: 24px; padding: 2.5rem;
+    width: 100%; max-width: 420px;
+    border: 1px solid #ffffff11;
+    animation: popIn 0.5s ease;
+    box-shadow: 0 0 40px #ff6b9d22;
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .auth-icon { font-size: 3.5rem; text-align: center; display: block; margin-bottom: 0.5rem; }
+  .auth-title {
+    font-family: 'Cinzel Decorative', serif; font-size: 1.6rem;
+    text-align: center; margin-bottom: 0.3rem;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .auth-sub { text-align: center; color: #888; font-size: 0.9rem; margin-bottom: 2rem; }
+
+  /* Tabs */
+  .tabs {
+    display: flex; background: var(--card2);
+    border-radius: 12px; padding: 4px; margin-bottom: 1.8rem;
+  }
+  .tab {
+    flex: 1; padding: 0.6rem; text-align: center;
+    border-radius: 9px; cursor: pointer;
+    font-weight: 700; font-size: 0.95rem;
+    color: #888; transition: all 0.3s;
+  }
+  .tab.active {
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    color: white;
+  }
+
+  .form-group { margin-bottom: 1.2rem; }
+  .form-group label { display:block; font-weight:600; color:#ccc; margin-bottom:0.4rem; font-size:0.88rem; }
+  .form-group input {
+    width:100%; padding:0.85rem 1rem;
+    background: var(--card2); border: 1px solid #ffffff22;
+    border-radius: 10px; color:#fff;
+    font-family:'Nunito',sans-serif; font-size:0.95rem; outline:none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .form-group input:focus { border-color:var(--pink); box-shadow:0 0 15px #ff6b9d33; }
+
+  .auth-btn {
+    width:100%; padding:1rem;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    border:none; border-radius:12px; color:white;
+    font-family:'Nunito',sans-serif; font-size:1.05rem; font-weight:800;
+    cursor:pointer; transition:all 0.3s;
+    box-shadow: 0 0 20px #ff6b9d44;
+    margin-bottom: 1rem;
+  }
+  .auth-btn:hover { transform:translateY(-2px); box-shadow:0 0 30px #ff6b9d88; }
+
+  .divider {
+    display:flex; align-items:center; gap:1rem; margin:1rem 0;
+    color:#555; font-size:0.85rem;
+  }
+  .divider::before, .divider::after {
+    content:''; flex:1; height:1px; background:#333;
+  }
+
+  .google-btn {
+    width:100%; padding:0.85rem;
+    background: var(--card2); border: 1px solid #333;
+    border-radius:12px; color:#ccc;
+    font-family:'Nunito',sans-serif; font-size:0.95rem; font-weight:700;
+    cursor:pointer; transition:all 0.3s; display:flex;
+    align-items:center; justify-content:center; gap:0.5rem;
+  }
+  .google-btn:hover { border-color: var(--pink); color:white; background:#ff6b9d11; }
+
+  .forgot { text-align:right; margin-top:-0.8rem; margin-bottom:1rem; }
+  .forgot a { color:var(--purple); font-size:0.85rem; text-decoration:none; }
+  .forgot a:hover { text-decoration:underline; }
+
+  .switch-text { text-align:center; color:#888; font-size:0.88rem; margin-top:0.5rem; }
+  .switch-text a { color:var(--pink); font-weight:700; cursor:pointer; }
+
+  /* Success state */
+  .success-state {
+    display: none; text-align: center; padding: 1rem 0;
+  }
+  .success-state .s-icon { font-size:4rem; display:block; margin-bottom:1rem; }
+  .success-state h2 { color: var(--green); margin-bottom:0.5rem; }
+  .success-state p { color:#aaa; margin-bottom:1.5rem; font-size:0.95rem; }
+  .success-state a {
+    display:inline-block; padding:0.8rem 2rem;
+    background: linear-gradient(135deg, var(--green), #059669);
+    border-radius:50px; color:white; font-weight:700;
+    text-decoration:none; transition:transform 0.2s;
+  }
+  .success-state a:hover { transform:translateY(-2px); }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="bg-glow"></div>
+
+<nav>
+  <div class="logo">📚 AniBooks</div>
+  <a href="home.html" class="nav-back">← Wapas Jao</a>
+</nav>
+
+<div class="main">
+  <div class="auth-box" id="authBox">
+    <span class="auth-icon">🌸</span>
+    <div class="auth-title">AniBooks</div>
+    <div class="auth-sub">Apni duniya mein log in karo ✨</div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" id="loginTab" onclick="switchTab('login')">🔐 Login</div>
+      <div class="tab" id="signupTab" onclick="switchTab('signup')">✨ Sign Up</div>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+      <div class="form-group">
+        <label>📧 Email</label>
+        <input type="email" id="loginEmail" placeholder="tumhara@email.com">
+      </div>
+      <div class="form-group">
+        <label>🔑 Password</label>
+        <input type="password" id="loginPass" placeholder="••••••••">
+      </div>
+      <div class="forgot"><a href="#">Password bhool gaye?</a></div>
+      <button class="auth-btn" onclick="doLogin()">🚀 Login Karo</button>
+      <div class="divider">ya</div>
+      <button class="google-btn" onclick="googleAuth()">
+        <span>🔵</span> Google se Login
+      </button>
+      <div class="switch-text" style="margin-top:1rem;">
+        Account nahi hai? <a onclick="switchTab('signup')">Sign Up Karo</a>
+      </div>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div id="signupForm" style="display:none;">
+      <div class="form-group">
+        <label>👤 Tumhara Naam</label>
+        <input type="text" id="signupName" placeholder="Pura naam">
+      </div>
+      <div class="form-group">
+        <label>📧 Email</label>
+        <input type="email" id="signupEmail" placeholder="tumhara@email.com">
+      </div>
+      <div class="form-group">
+        <label>🔑 Password</label>
+        <input type="password" id="signupPass" placeholder="Minimum 6 characters">
+      </div>
+      <div class="form-group">
+        <label>🔑 Confirm Password</label>
+        <input type="password" id="signupPass2" placeholder="Dobara daalo">
+      </div>
+      <button class="auth-btn" onclick="doSignup()">🌟 Account Banao</button>
+      <div class="divider">ya</div>
+      <button class="google-btn" onclick="googleAuth()">
+        <span>🔵</span> Google se Sign Up
+      </button>
+      <div class="switch-text" style="margin-top:1rem;">
+        Already account hai? <a onclick="switchTab('login')">Login Karo</a>
+      </div>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div class="success-state" id="successState">
+      <span class="s-icon">🎉</span>
+      <h2 id="successTitle">Login Ho Gaye!</h2>
+      <p id="successMsg">Welcome back AniBooks pe! Ab books padho aur becho.</p>
+      <a href="home.html">📚 Books Dekho</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// Stars
+const starsEl = document.getElementById('stars');
+for(let i=0;i<100;i++){
+  const s=document.createElement('div'); s.className='star';
+  s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*100+'%';
+  s.style.animationDelay=Math.random()*3+'s'; starsEl.appendChild(s);
+}
+
+function switchTab(tab) {
+  document.getElementById('loginTab').classList.toggle('active', tab==='login');
+  document.getElementById('signupTab').classList.toggle('active', tab==='signup');
+  document.getElementById('loginForm').style.display = tab==='login' ? 'block' : 'none';
+  document.getElementById('signupForm').style.display = tab==='signup' ? 'block' : 'none';
+}
+
+function showSuccess(title, msg) {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('signupForm').style.display = 'none';
+  document.getElementById('successTitle').textContent = title;
+  document.getElementById('successMsg').textContent = msg;
+  document.getElementById('successState').style.display = 'block';
+}
+
+function doLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPass').value;
+  if(!email) { alert('📧 Email daalo!'); return; }
+  if(!pass) { alert('🔑 Password daalo!'); return; }
+  showSuccess('Login Ho Gaye! 🎉', `Welcome back ${email.split('@')[0]}! Ab books padho aur enjoy karo.`);
+}
+
+function doSignup() {
+  const name = document.getElementById('signupName').value;
+  const email = document.getElementById('signupEmail').value;
+  const pass = document.getElementById('signupPass').value;
+  const pass2 = document.getElementById('signupPass2').value;
+  if(!name) { alert('👤 Naam daalo!'); return; }
+  if(!email) { alert('📧 Email daalo!'); return; }
+  if(pass.length < 6) { alert('🔑 Password kam se kam 6 characters ka hona chahiye!'); return; }
+  if(pass !== pass2) { alert('🔑 Dono passwords match nahi kar rahe!'); return; }
+  showSuccess('Account Ban Gaya! 🌟', `Welcome ${name}! AniBooks pe tumhara swagat hai. Ab books padho aur becho!`);
+}
+
+function googleAuth() {
+  showSuccess('Google se Login! 🔵', 'Google account se successfully login ho gaye! AniBooks pe welcome hai.');
+}
+</script>
+</body>
+</html>

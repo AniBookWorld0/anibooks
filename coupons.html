@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎁 Coupons - AniBooks</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--pink:#ff6b9d;--purple:#c084fc;--blue:#60a5fa;--green:#34d399;--yellow:#fbbf24;--orange:#fb923c;--darker:#070710;--card:#13132a;--card2:#1a1a35;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--darker);color:#fff;font-family:'Nunito',sans-serif;overflow-x:hidden;}
+  .stars{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+  .star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;animation:twinkle 3s infinite;}
+  @keyframes twinkle{0%,100%{opacity:0.2;}50%{opacity:1;}}
+  nav{position:sticky;top:0;z-index:100;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;background:#070710ee;backdrop-filter:blur(10px);border-bottom:1px solid #ffffff11;}
+  .logo{font-family:'Cinzel Decorative',serif;font-size:1.2rem;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .nav-back{color:#aaa;text-decoration:none;font-weight:600;}
+  .nav-back:hover{color:var(--pink);}
+  .main{position:relative;z-index:2;padding:2rem;max-width:900px;margin:0 auto;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-15px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes popIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+
+  .page-header{text-align:center;margin-bottom:2.5rem;animation:fadeIn 0.5s ease;}
+  .page-header .icon{font-size:4rem;display:block;margin-bottom:0.5rem;animation:bounce 2s ease-in-out infinite;}
+  @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+  .page-header h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.5rem,4vw,2.5rem);
+    background:linear-gradient(135deg,var(--yellow),var(--orange));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.3rem;}
+  .page-header p{color:#888;}
+
+  /* APPLY COUPON */
+  .apply-box{
+    background:var(--card);border-radius:20px;padding:2rem;
+    border:1px solid #fbbf2433;margin-bottom:2rem;
+    box-shadow:0 0 30px #fbbf2411;animation:fadeIn 0.5s ease 0.1s both;
+  }
+  .apply-box h2{color:var(--yellow);margin-bottom:1.2rem;font-size:1.1rem;}
+  .coupon-input-row{display:flex;gap:0.8rem;flex-wrap:wrap;}
+  .coupon-input{
+    flex:1;min-width:200px;padding:0.9rem 1.2rem;
+    background:var(--card2);border:2px solid #fbbf2433;
+    border-radius:12px;color:#fff;font-family:'Nunito',sans-serif;
+    font-size:1rem;outline:none;letter-spacing:2px;font-weight:700;
+    text-transform:uppercase;transition:all 0.3s;
+  }
+  .coupon-input:focus{border-color:var(--yellow);box-shadow:0 0 15px #fbbf2433;}
+  .apply-btn{
+    padding:0.9rem 2rem;background:linear-gradient(135deg,var(--yellow),var(--orange));
+    border:none;border-radius:12px;color:#000;font-family:'Nunito',sans-serif;
+    font-weight:800;font-size:1rem;cursor:pointer;transition:all 0.3s;
+  }
+  .apply-btn:hover{transform:translateY(-2px);box-shadow:0 0 20px #fbbf2455;}
+
+  /* RESULT */
+  .coupon-result{
+    margin-top:1rem;padding:1rem 1.2rem;border-radius:10px;
+    display:none;animation:popIn 0.3s ease;
+  }
+  .coupon-result.success{background:#34d39911;border:1px solid var(--green);color:var(--green);}
+  .coupon-result.error{background:#f8717111;border:1px solid #f87171;color:#f87171;}
+  .coupon-result .disc-amount{font-size:1.3rem;font-weight:800;margin-top:0.3rem;}
+
+  /* AVAILABLE COUPONS */
+  .coupons-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.2rem;margin-bottom:2rem;}
+
+  .coupon-card{
+    background:var(--card);border-radius:16px;overflow:hidden;
+    border:1px solid #ffffff11;transition:all 0.3s;
+    animation:fadeIn 0.5s ease both;position:relative;
+  }
+  .coupon-card:hover{transform:translateY(-5px);}
+  .coupon-card.pink-c{border-color:#ff6b9d33;}
+  .coupon-card.pink-c:hover{box-shadow:0 0 25px #ff6b9d33;}
+  .coupon-card.purple-c{border-color:#c084fc33;}
+  .coupon-card.purple-c:hover{box-shadow:0 0 25px #c084fc33;}
+  .coupon-card.blue-c{border-color:#60a5fa33;}
+  .coupon-card.blue-c:hover{box-shadow:0 0 25px #60a5fa33;}
+  .coupon-card.green-c{border-color:#34d39933;}
+  .coupon-card.green-c:hover{box-shadow:0 0 25px #34d39933;}
+
+  .coupon-top{padding:1.2rem;display:flex;justify-content:space-between;align-items:flex-start;}
+  .coupon-icon{font-size:2.5rem;}
+  .disc-badge{
+    font-size:1.3rem;font-weight:900;
+    padding:0.3rem 0.8rem;border-radius:10px;
+  }
+  .pink-c .disc-badge{background:#ff6b9d22;color:var(--pink);}
+  .purple-c .disc-badge{background:#c084fc22;color:var(--purple);}
+  .blue-c .disc-badge{background:#60a5fa22;color:var(--blue);}
+  .green-c .disc-badge{background:#34d39922;color:var(--green);}
+
+  .coupon-divider{
+    border:none;border-top:2px dashed #ffffff11;margin:0;
+    position:relative;
+  }
+  .coupon-divider::before,.coupon-divider::after{
+    content:'';position:absolute;top:-8px;
+    width:16px;height:16px;background:var(--darker);border-radius:50%;
+  }
+  .coupon-divider::before{left:-8px;}
+  .coupon-divider::after{right:-8px;}
+
+  .coupon-bottom{padding:1rem 1.2rem;}
+  .coupon-code{
+    font-family:monospace;font-size:1.1rem;font-weight:800;
+    letter-spacing:3px;margin-bottom:0.5rem;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .copy-btn{
+    background:var(--card2);border:1px solid #333;color:#aaa;
+    padding:0.3rem 0.6rem;border-radius:6px;font-size:0.75rem;
+    cursor:pointer;transition:all 0.2s;
+  }
+  .copy-btn:hover{border-color:var(--yellow);color:var(--yellow);}
+  .coupon-desc{color:#888;font-size:0.82rem;margin-bottom:0.5rem;}
+  .coupon-expire{color:#555;font-size:0.75rem;}
+  .coupon-expire.expiring{color:var(--orange);}
+  .use-coupon-btn{
+    width:100%;padding:0.6rem;margin-top:0.8rem;
+    border:none;border-radius:8px;color:white;
+    font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer;
+    font-size:0.9rem;transition:all 0.2s;
+  }
+  .pink-c .use-coupon-btn{background:linear-gradient(135deg,var(--pink),#ff8fab);}
+  .purple-c .use-coupon-btn{background:linear-gradient(135deg,var(--purple),#a855f7);}
+  .blue-c .use-coupon-btn{background:linear-gradient(135deg,var(--blue),#3b82f6);}
+  .green-c .use-coupon-btn{background:linear-gradient(135deg,var(--green),#059669);}
+  .use-coupon-btn:hover{transform:scale(1.02);}
+
+  /* CONFETTI */
+  .confetti-piece{
+    position:fixed;width:10px;height:10px;border-radius:2px;
+    pointer-events:none;z-index:9999;
+    animation:confettiFall 2s ease forwards;
+  }
+  @keyframes confettiFall{
+    0%{opacity:1;transform:translateY(-20px) rotate(0deg);}
+    100%{opacity:0;transform:translateY(80vh) rotate(720deg);}
+  }
+
+  .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);
+    background:var(--card);border:1px solid var(--green);color:var(--green);
+    padding:0.8rem 2rem;border-radius:50px;font-weight:700;z-index:9999;
+    transition:transform 0.3s;box-shadow:0 0 20px #34d39933;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+
+  /* CHECKOUT PREVIEW */
+  .checkout-preview{
+    background:var(--card);border-radius:16px;padding:1.5rem;
+    border:1px solid #ffffff11;animation:fadeIn 0.5s ease 0.3s both;
+  }
+  .checkout-preview h2{color:var(--purple);margin-bottom:1.2rem;font-size:1.1rem;}
+  .price-row{display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid #ffffff11;font-size:0.95rem;}
+  .price-row:last-of-type{border:none;}
+  .price-row .label{color:#888;}
+  .price-row .value{font-weight:700;}
+  .price-row.discount .value{color:var(--green);}
+  .price-row.total .label{color:#fff;font-weight:800;}
+  .price-row.total .value{color:var(--yellow);font-size:1.2rem;font-weight:900;}
+  .checkout-btn{
+    width:100%;padding:1rem;margin-top:1rem;
+    background:linear-gradient(135deg,var(--green),#059669);
+    border:none;border-radius:12px;color:white;
+    font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;
+    cursor:pointer;transition:all 0.3s;
+  }
+  .checkout-btn:hover{transform:translateY(-2px);box-shadow:0 0 20px #34d39955;}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<nav>
+  <div class="logo">📚 AniBooks</div>
+  <a href="home.html" class="nav-back">← Home</a>
+</nav>
+
+<div class="main">
+  <div class="page-header">
+    <span class="icon">🎁</span>
+    <h1>Coupons & Offers</h1>
+    <p>Discount le lo aur books sasto mein kharido! 🎉</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;" class="two-col-main">
+
+    <!-- APPLY COUPON -->
+    <div class="apply-box">
+      <h2>🏷️ Coupon Apply Karo</h2>
+      <div class="coupon-input-row">
+        <input class="coupon-input" id="couponInput" placeholder="CODE DAALO" maxlength="20">
+        <button class="apply-btn" onclick="applyCoupon()">✅ Apply</button>
+      </div>
+      <div class="coupon-result" id="couponResult"></div>
+    </div>
+
+    <!-- CHECKOUT PREVIEW -->
+    <div class="checkout-preview">
+      <h2>🛒 Order Summary</h2>
+      <div class="price-row"><span class="label">📚 Meri Pehli Kahani</span><span class="value">₹99</span></div>
+      <div class="price-row"><span class="label">⚡ Tech Ki Duniya</span><span class="value">₹149</span></div>
+      <div class="price-row"><span class="label">Subtotal</span><span class="value">₹248</span></div>
+      <div class="price-row discount" id="discountRow" style="display:none"><span class="label">🎁 Discount</span><span class="value" id="discountVal">-₹0</span></div>
+      <div class="price-row total"><span class="label">Total</span><span class="value" id="totalVal">₹248</span></div>
+      <button class="checkout-btn">💳 Checkout Karo</button>
+    </div>
+  </div>
+
+  <!-- AVAILABLE COUPONS -->
+  <h2 style="margin-bottom:1.2rem;font-size:1.1rem;color:#fff;">🎪 Available Coupons</h2>
+  <div class="coupons-grid" id="couponsGrid"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<style>
+@media(max-width:768px){.two-col-main{grid-template-columns:1fr!important;}}
+</style>
+
+<script>
+const starsEl=document.getElementById('stars');
+for(let i=0;i<80;i++){const s=document.createElement('div');s.className='star';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';s.style.animationDelay=Math.random()*3+'s';starsEl.appendChild(s);}
+
+const coupons = [
+  {code:'WELCOME50',disc:50,type:'percent',desc:'Naye users ke liye 50% off!',icon:'🌸',color:'pink-c',expire:'31 March 2026',expiring:false},
+  {code:'ANIME20',disc:20,type:'percent',desc:'Anime lovers ke liye 20% off',icon:'🎌',color:'purple-c',expire:'15 April 2026',expiring:false},
+  {code:'FLAT30',disc:30,type:'flat',desc:'₹30 seedha discount',icon:'⚡',color:'blue-c',expire:'10 March 2026',expiring:true},
+  {code:'READER100',disc:100,type:'flat',desc:'₹100+ purchase pe ₹100 off',icon:'📚',color:'green-c',expire:'30 April 2026',expiring:false},
+];
+
+const grid = document.getElementById('couponsGrid');
+coupons.forEach((c,i) => {
+  grid.innerHTML += `
+    <div class="coupon-card ${c.color}" style="animation-delay:${i*0.08}s">
+      <div class="coupon-top">
+        <span class="coupon-icon">${c.icon}</span>
+        <span class="disc-badge">${c.type==='percent'?c.disc+'% OFF':'₹'+c.disc+' OFF'}</span>
+      </div>
+      <hr class="coupon-divider">
+      <div class="coupon-bottom">
+        <div class="coupon-code">
+          <span>${c.code}</span>
+          <button class="copy-btn" onclick="copyCode('${c.code}')">📋 Copy</button>
+        </div>
+        <div class="coupon-desc">${c.desc}</div>
+        <div class="coupon-expire ${c.expiring?'expiring':''}">⏳ Expire: ${c.expire}${c.expiring?' (Jaldi karo!)':''}</div>
+        <button class="use-coupon-btn" onclick="useCode('${c.code}')">🎁 Use Karo</button>
+      </div>
+    </div>`;
+});
+
+function copyCode(code) {
+  navigator.clipboard.writeText(code).catch(()=>{});
+  showToast('📋 Code copy ho gaya: '+code);
+}
+
+function useCode(code) {
+  document.getElementById('couponInput').value = code;
+  applyCoupon();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function applyCoupon() {
+  const input = document.getElementById('couponInput').value.toUpperCase().trim();
+  const resultEl = document.getElementById('couponResult');
+  const found = coupons.find(c => c.code === input);
+  
+  if(!input){alert('Code daalo pehle!');return;}
+  
+  if(found) {
+    const subtotal = 248;
+    let disc = found.type==='percent' ? Math.round(subtotal*found.disc/100) : found.disc;
+    disc = Math.min(disc, subtotal);
+    const total = subtotal - disc;
+    
+    resultEl.className = 'coupon-result success';
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = `✅ Coupon laga diya! <div class="disc-amount">₹${disc} ka discount mila! 🎉</div>`;
+    
+    document.getElementById('discountRow').style.display = 'flex';
+    document.getElementById('discountVal').textContent = '-₹'+disc;
+    document.getElementById('totalVal').textContent = '₹'+total;
+    
+    launchConfetti();
+    showToast('🎉 Coupon apply ho gaya!');
+  } else {
+    resultEl.className = 'coupon-result error';
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = '❌ Yeh coupon valid nahi hai ya expire ho gaya!';
+  }
+}
+
+function launchConfetti() {
+  const colors = ['#ff6b9d','#c084fc','#60a5fa','#34d399','#fbbf24'];
+  for(let i=0;i<40;i++){
+    const c = document.createElement('div');
+    c.className = 'confetti-piece';
+    c.style.left = Math.random()*100+'vw';
+    c.style.top = '-20px';
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.animationDelay = Math.random()*0.5+'s';
+    c.style.animationDuration = (1.5+Math.random())+'s';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(), 2500);
+  }
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+document.getElementById('couponInput').addEventListener('keypress',e=>{if(e.key==='Enter')applyCoupon();});
+</script>
+</body>
+</html>

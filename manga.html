@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎌 Manga Reader - AniBooks</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Nunito:wght@400;600;700;800&family=Bangers&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#ff6b9d;--purple:#c084fc;--blue:#60a5fa;
+    --green:#34d399;--yellow:#fbbf24;
+    --darker:#070710;--card:#13132a;--card2:#1a1a35;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--darker);color:#fff;font-family:'Nunito',sans-serif;overflow-x:hidden;}
+  .stars{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+  .star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;animation:twinkle 3s infinite;}
+  @keyframes twinkle{0%,100%{opacity:0.2;}50%{opacity:1;}}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-15px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes popIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:100;padding:0.8rem 2rem;
+    display:flex;justify-content:space-between;align-items:center;
+    background:#070710ee;backdrop-filter:blur(12px);border-bottom:1px solid #ffffff11;}
+  .logo{font-family:'Cinzel Decorative',serif;font-size:1.2rem;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .nav-links{display:flex;gap:1rem;align-items:center;}
+  .nav-links a{color:#aaa;text-decoration:none;font-weight:600;font-size:0.9rem;transition:color 0.3s;}
+  .nav-links a:hover{color:var(--pink);}
+
+  /* MAIN */
+  .main{position:relative;z-index:2;padding:2rem;max-width:1200px;margin:0 auto;}
+
+  /* PAGE HEADER */
+  .page-header{text-align:center;margin-bottom:2.5rem;animation:fadeIn 0.6s ease;}
+  .page-header .icon{font-size:4rem;display:block;margin-bottom:0.5rem;animation:float 3s ease-in-out infinite;}
+  .page-header h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3rem);
+    background:linear-gradient(135deg,var(--pink),var(--purple),var(--blue));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.3rem;}
+  .page-header p{color:#888;}
+
+  /* VIEW TOGGLE */
+  .view-toggle{display:flex;justify-content:center;gap:0.5rem;margin-bottom:2rem;}
+  .view-btn{padding:0.6rem 1.5rem;border-radius:50px;border:1px solid #333;
+    background:var(--card);color:#888;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-weight:700;transition:all 0.3s;}
+  .view-btn.active{background:linear-gradient(135deg,var(--pink),var(--purple));
+    border-color:transparent;color:white;}
+
+  /* MANGA GRID */
+  .manga-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.5rem;}
+
+  .manga-card{
+    background:var(--card);border-radius:16px;overflow:hidden;
+    border:1px solid #ffffff11;transition:all 0.3s;cursor:pointer;
+    animation:fadeIn 0.5s ease both;
+  }
+  .manga-card:hover{transform:translateY(-8px);border-color:var(--pink);box-shadow:0 0 25px #ff6b9d33;}
+  .manga-cover{
+    height:220px;display:flex;align-items:center;justify-content:center;
+    font-size:5rem;position:relative;overflow:hidden;
+  }
+  .c1{background:linear-gradient(135deg,#1a0533,#6b21a8);}
+  .c2{background:linear-gradient(135deg,#0f172a,#1e3a5f);}
+  .c3{background:linear-gradient(135deg,#1a0a00,#7c2d12);}
+  .c4{background:linear-gradient(135deg,#0a1a0a,#14532d);}
+  .c5{background:linear-gradient(135deg,#1a0020,#831843);}
+  .c6{background:linear-gradient(135deg,#0a0a1a,#1e1b4b);}
+
+  .manga-cover::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(to top,#000000cc 0%,transparent 50%);
+  }
+  .free-tag,.paid-tag{
+    position:absolute;top:10px;left:10px;z-index:2;
+    padding:0.2rem 0.6rem;border-radius:20px;font-size:0.72rem;font-weight:800;
+  }
+  .free-tag{background:var(--green);color:#000;}
+  .paid-tag{background:var(--yellow);color:#000;}
+  .chapter-count{
+    position:absolute;bottom:10px;right:10px;z-index:2;
+    background:#00000088;color:#aaa;padding:0.2rem 0.5rem;
+    border-radius:6px;font-size:0.72rem;
+  }
+
+  .manga-info{padding:1rem;}
+  .manga-info h3{font-size:0.95rem;font-weight:800;margin-bottom:0.2rem;}
+  .manga-info .genre{color:#888;font-size:0.75rem;margin-bottom:0.5rem;}
+  .manga-info .rating{color:var(--yellow);font-size:0.8rem;margin-bottom:0.7rem;}
+  .manga-info .price-tag{font-weight:800;margin-bottom:0.8rem;}
+  .manga-info .price-tag.free{color:var(--green);}
+  .manga-info .price-tag.paid{color:var(--yellow);}
+  .read-btn{
+    width:100%;padding:0.55rem;border-radius:8px;border:none;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    color:white;font-family:'Nunito',sans-serif;font-weight:800;
+    font-size:0.85rem;cursor:pointer;transition:transform 0.2s;
+  }
+  .read-btn:hover{transform:scale(1.02);}
+
+  /* ===== READER OVERLAY ===== */
+  .reader-overlay{
+    position:fixed;inset:0;z-index:500;
+    background:var(--darker);
+    display:none;flex-direction:column;
+    overflow:hidden;
+  }
+  .reader-overlay.open{display:flex;}
+
+  /* READER TOPBAR */
+  .reader-topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0.8rem 1.5rem;background:#0d0d1aee;
+    backdrop-filter:blur(10px);border-bottom:1px solid #ffffff11;
+    flex-shrink:0;flex-wrap:wrap;gap:0.5rem;z-index:10;
+  }
+  .reader-title{font-weight:800;font-size:1rem;}
+  .reader-chapter{color:var(--pink);font-size:0.85rem;}
+  .reader-controls{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;}
+  .ctrl-btn{
+    padding:0.4rem 0.8rem;border-radius:8px;
+    background:var(--card2);border:1px solid #333;
+    color:#aaa;cursor:pointer;font-size:0.8rem;
+    transition:all 0.2s;font-family:'Nunito',sans-serif;font-weight:700;
+  }
+  .ctrl-btn:hover{border-color:var(--pink);color:var(--pink);}
+  .ctrl-btn.active-mode{background:var(--pink)22;border-color:var(--pink);color:var(--pink);}
+  .close-reader{
+    padding:0.4rem 1rem;border-radius:8px;
+    background:#f8717122;border:1px solid var(--red);
+    color:var(--red);cursor:pointer;font-weight:700;font-size:0.85rem;
+    transition:all 0.2s;
+  }
+  .close-reader:hover{background:var(--red);color:#fff;}
+
+  /* SCROLL MODE — main reader */
+  .reader-body{
+    flex:1;overflow-y:auto;overflow-x:hidden;
+    scroll-behavior:smooth;
+    background:#0a0a0a;
+  }
+  .reader-body::-webkit-scrollbar{width:4px;}
+  .reader-body::-webkit-scrollbar-thumb{background:var(--pink);border-radius:4px;}
+
+  /* Scroll style pages */
+  .scroll-pages{
+    display:flex;flex-direction:column;align-items:center;
+    padding:1rem 0;gap:4px;
+  }
+  .manga-page-img{
+    width:100%;max-width:700px;
+    background:var(--card);
+    display:flex;align-items:center;justify-content:center;
+    min-height:500px;position:relative;overflow:hidden;
+    border-radius:2px;
+  }
+  .manga-page-img .page-art{
+    width:100%;min-height:500px;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:1rem;
+    font-family:'Bangers',cursive;
+    position:relative;overflow:hidden;
+  }
+  .page-num-label{
+    position:absolute;bottom:10px;right:15px;
+    color:#ffffff44;font-size:0.8rem;font-family:'Nunito',sans-serif;
+  }
+
+  /* PAGE FLIP MODE */
+  .flip-mode{display:none;}
+  .flip-mode.active{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:1rem;}
+  .flip-page-wrap{
+    max-width:650px;width:100%;
+    background:var(--card);border-radius:8px;overflow:hidden;
+    box-shadow:0 0 40px #00000088;
+    min-height:500px;display:flex;align-items:center;justify-content:center;
+  }
+  .flip-nav{display:flex;align-items:center;gap:1rem;margin-top:1rem;flex-wrap:wrap;justify-content:center;}
+  .flip-arrow{
+    padding:0.7rem 1.5rem;border-radius:50px;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    border:none;color:white;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-weight:800;font-size:1rem;transition:all 0.3s;
+  }
+  .flip-arrow:hover{transform:scale(1.05);}
+  .flip-arrow:disabled{opacity:0.3;cursor:not-allowed;transform:none;}
+  .flip-counter{color:#888;font-size:0.9rem;min-width:100px;text-align:center;}
+
+  /* PROGRESS BAR */
+  .reader-progress{
+    height:3px;background:#ffffff11;flex-shrink:0;
+  }
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));
+    transition:width 0.3s;width:0%;}
+
+  /* PAYWALL */
+  .paywall{
+    position:relative;
+  }
+  .paywall-blur{
+    filter:blur(8px);pointer-events:none;user-select:none;
+    opacity:0.4;
+  }
+  .paywall-overlay{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(to top,var(--darker) 0%,#070710aa 60%,transparent 100%);
+  }
+  .paywall-box{
+    text-align:center;padding:2rem;
+    background:var(--card);border:1px solid var(--yellow);
+    border-radius:20px;max-width:320px;
+    box-shadow:0 0 40px #fbbf2433;animation:popIn 0.4s ease;
+  }
+  .paywall-box .lock{font-size:3rem;display:block;margin-bottom:0.5rem;}
+  .paywall-box h3{color:var(--yellow);margin-bottom:0.5rem;}
+  .paywall-box p{color:#888;font-size:0.85rem;margin-bottom:1.2rem;line-height:1.6;}
+  .unlock-btn{
+    padding:0.8rem 2rem;
+    background:linear-gradient(135deg,var(--yellow),var(--orange));
+    border:none;border-radius:50px;color:#000;
+    font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;
+    cursor:pointer;transition:all 0.3s;
+  }
+  .unlock-btn:hover{transform:translateY(-2px);box-shadow:0 0 20px #fbbf2455;}
+  @keyframes orange{0%{--orange:#fb923c;}100%{--orange:#fb923c;}}
+  :root{--orange:#fb923c;}
+
+  /* CHAPTER LIST */
+  .chapter-list{
+    display:flex;flex-direction:column;gap:0.5rem;margin-bottom:2rem;
+  }
+  .chapter-item{
+    background:var(--card);border-radius:10px;padding:0.8rem 1.2rem;
+    border:1px solid #ffffff11;display:flex;align-items:center;
+    justify-content:space-between;cursor:pointer;transition:all 0.2s;
+  }
+  .chapter-item:hover{border-color:var(--purple);background:var(--card2);}
+  .chapter-item .ch-left{display:flex;align-items:center;gap:0.8rem;}
+  .chapter-item .ch-num{color:var(--purple);font-weight:800;font-size:0.9rem;}
+  .chapter-item .ch-title{font-size:0.9rem;}
+  .chapter-item .ch-date{color:#666;font-size:0.75rem;}
+  .ch-badge{padding:0.2rem 0.5rem;border-radius:6px;font-size:0.72rem;font-weight:700;}
+  .ch-free{background:var(--green)22;color:var(--green);border:1px solid var(--green);}
+  .ch-paid{background:var(--yellow)22;color:var(--yellow);border:1px solid var(--yellow);}
+
+  /* MANGA DETAIL VIEW */
+  .manga-detail{display:none;animation:fadeIn 0.4s ease;}
+  .manga-detail.show{display:block;}
+  .manga-list-view{animation:fadeIn 0.4s ease;}
+
+  .detail-hero{
+    background:var(--card);border-radius:20px;padding:1.5rem;
+    display:flex;gap:1.5rem;margin-bottom:1.5rem;
+    border:1px solid #ffffff11;flex-wrap:wrap;
+  }
+  .detail-cover{
+    width:140px;height:200px;border-radius:12px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:5rem;
+  }
+  .detail-meta h2{font-size:1.5rem;margin-bottom:0.3rem;}
+  .detail-meta .genre-pills{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.8rem;}
+  .genre-pill{background:var(--purple)22;color:var(--purple);border:1px solid var(--purple)44;
+    padding:0.2rem 0.6rem;border-radius:20px;font-size:0.75rem;}
+  .detail-meta .desc{color:#999;font-size:0.88rem;line-height:1.6;margin-bottom:1rem;}
+  .detail-meta .rating-row{color:var(--yellow);margin-bottom:1rem;}
+
+  /* UPLOAD SECTION */
+  .upload-section{
+    background:var(--card);border-radius:20px;padding:2rem;
+    border:1px solid #ff6b9d22;margin-bottom:2rem;animation:fadeIn 0.5s ease;
+  }
+  .upload-section h2{color:var(--pink);margin-bottom:1.5rem;font-size:1.1rem;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+  @media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+  .form-group label{display:block;font-weight:600;color:#ccc;margin-bottom:0.4rem;font-size:0.85rem;}
+  .form-group input,.form-group select,.form-group textarea{
+    width:100%;padding:0.75rem 1rem;background:var(--card2);
+    border:1px solid #ffffff22;border-radius:10px;color:#fff;
+    font-family:'Nunito',sans-serif;font-size:0.9rem;outline:none;
+    transition:border-color 0.3s;
+  }
+  .form-group input:focus,.form-group select:focus{border-color:var(--pink);}
+  .form-group select option{background:var(--darker);}
+  .upload-area{
+    border:2px dashed #ffffff22;border-radius:12px;padding:2rem;
+    text-align:center;cursor:pointer;transition:all 0.3s;background:var(--card2);
+  }
+  .upload-area:hover{border-color:var(--purple);background:#c084fc11;}
+  .upload-area input{display:none;}
+  .upload-area p{color:#888;font-size:0.85rem;}
+  .upload-area span{color:var(--purple);font-weight:700;}
+  .submit-btn{
+    padding:0.9rem 2.5rem;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    border:none;border-radius:50px;color:white;
+    font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;
+    cursor:pointer;transition:all 0.3s;margin-top:1rem;
+  }
+  .submit-btn:hover{transform:translateY(-2px);box-shadow:0 0 20px #ff6b9d55;}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);
+    background:var(--card);border:1px solid var(--green);color:var(--green);
+    padding:0.8rem 2rem;border-radius:50px;font-weight:700;z-index:9999;
+    transition:transform 0.3s;box-shadow:0 0 20px #34d39933;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+
+  /* RESPONSIVE */
+  @media(max-width:768px){
+    .manga-grid{grid-template-columns:repeat(2,1fr);}
+    .detail-hero{flex-direction:column;}
+    .detail-cover{width:100%;height:200px;}
+  }
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+
+<nav>
+  <div class="logo">📚 AniBooks</div>
+  <div class="nav-links">
+    <a href="home.html">🏠 Home</a>
+    <a href="#" onclick="showUpload()" style="color:var(--pink);font-weight:800;">📤 Upload</a>
+    <a href="login.html" style="background:linear-gradient(135deg,var(--pink),var(--purple));padding:0.3rem 0.9rem;border-radius:20px;color:white;font-weight:800;">🔐 Login</a>
+  </div>
+</nav>
+
+<div class="main">
+
+  <!-- MANGA LIST VIEW -->
+  <div class="manga-list-view" id="listView">
+    <div class="page-header">
+      <span class="icon">🎌</span>
+      <h1>Manga World</h1>
+      <p>Free padho ya kharido — tum decide karo! ✨</p>
+    </div>
+
+    <div class="view-toggle">
+      <button class="view-btn active" onclick="setFilter('all',this)">✨ Sab</button>
+      <button class="view-btn" onclick="setFilter('free',this)">🆓 Free</button>
+      <button class="view-btn" onclick="setFilter('paid',this)">💰 Paid</button>
+    </div>
+
+    <div class="manga-grid" id="mangaGrid"></div>
+  </div>
+
+  <!-- MANGA DETAIL VIEW -->
+  <div class="manga-detail" id="detailView">
+    <button onclick="backToList()" style="margin-bottom:1.5rem;padding:0.5rem 1.2rem;background:var(--card);border:1px solid #333;border-radius:50px;color:#aaa;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;">← Wapas</button>
+    <div id="detailContent"></div>
+  </div>
+
+  <!-- UPLOAD SECTION -->
+  <div class="upload-section" id="uploadSection" style="display:none;">
+    <h2>📤 Manga Upload Karo</h2>
+    <div class="form-row">
+      <div class="form-group"><label>🎌 Manga Ka Naam *</label><input type="text" id="mName" placeholder="Manga title..."></div>
+      <div class="form-group"><label>✍️ Author/Artist *</label><input type="text" id="mAuthor" placeholder="Tumhara naam..."></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>🏷️ Genre</label>
+        <select id="mGenre">
+          <option>Action</option><option>Romance</option><option>Fantasy</option>
+          <option>Horror</option><option>Comedy</option><option>Slice of Life</option>
+          <option>Isekai</option><option>Shounen</option><option>Shoujo</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>💰 Type</label>
+        <select id="mType">
+          <option value="free">🆓 Free (Sab padh sakte hain)</option>
+          <option value="paid">💰 Paid (2-3 pages preview)</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" id="priceGroup" style="display:none;">
+        <label>💵 Price (₹)</label>
+        <input type="number" id="mPrice" placeholder="Jaise: 49">
+      </div>
+      <div class="form-group">
+        <label>📖 Chapter Number</label>
+        <input type="number" id="mChapter" placeholder="1" value="1">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:1rem;">
+      <label>📝 Description</label>
+      <textarea id="mDesc" style="min-height:80px;" placeholder="Manga ki story ke baare mein thoda batao..."></textarea>
+    </div>
+    <div class="form-group" style="margin-bottom:1rem;">
+      <label>🖼️ Manga Pages Upload (Images) *</label>
+      <div class="upload-area" onclick="document.getElementById('pagesInput').click()">
+        <span style="font-size:2rem;display:block;margin-bottom:0.5rem;">🖼️</span>
+        <p><span>Click karo</span> ya drag karo — saari pages ek saath select karo</p>
+        <p id="pagesCount" style="color:var(--green);margin-top:0.5rem;font-weight:700;"></p>
+        <input type="file" id="pagesInput" accept="image/*" multiple onchange="countPages()">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:1rem;">
+      <label>🎨 Cover Image</label>
+      <div class="upload-area" onclick="document.getElementById('coverInput').click()">
+        <span style="font-size:2rem;display:block;margin-bottom:0.3rem;">🎨</span>
+        <p><span>Cover image</span> upload karo</p>
+        <p id="coverCount" style="color:var(--green);margin-top:0.3rem;font-weight:700;"></p>
+        <input type="file" id="coverInput" accept="image/*" onchange="document.getElementById('coverCount').textContent='✅ '+this.files[0].name">
+      </div>
+    </div>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+      <button class="submit-btn" onclick="submitManga()">🚀 Manga Submit Karo!</button>
+      <button onclick="hideUpload()" style="padding:0.9rem 2rem;background:var(--card);border:1px solid #333;border-radius:50px;color:#aaa;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;">Cancel</button>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<!-- ===== READER OVERLAY ===== -->
+<div class="reader-overlay" id="readerOverlay">
+  <div class="reader-topbar">
+    <div>
+      <div class="reader-title" id="readerTitle">Manga Title</div>
+      <div class="reader-chapter" id="readerChapter">Chapter 1</div>
+    </div>
+    <div class="reader-controls">
+      <button class="ctrl-btn active-mode" id="scrollBtn" onclick="setMode('scroll')">📜 Scroll</button>
+      <button class="ctrl-btn" id="flipBtn" onclick="setMode('flip')">📖 Page Flip</button>
+      <button class="close-reader" onclick="closeReader()">✕ Band Karo</button>
+    </div>
+  </div>
+  <div class="reader-progress"><div class="progress-fill" id="progressFill"></div></div>
+
+  <!-- SCROLL MODE -->
+  <div class="reader-body" id="scrollMode" onscroll="updateProgress()">
+    <div class="scroll-pages" id="scrollPages"></div>
+  </div>
+
+  <!-- FLIP MODE -->
+  <div class="reader-body flip-mode" id="flipMode">
+    <div class="flip-page-wrap" id="flipPageWrap"></div>
+    <div class="flip-nav">
+      <button class="flip-arrow" id="prevBtn" onclick="flipPage(-1)">◀ Pichla</button>
+      <div class="flip-counter" id="flipCounter">Page 1 / ?</div>
+      <button class="flip-arrow" id="nextBtn" onclick="flipPage(1)">Agla ▶</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// Stars
+const starsEl=document.getElementById('stars');
+for(let i=0;i<100;i++){const s=document.createElement('div');s.className='star';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';s.style.animationDelay=Math.random()*3+'s';starsEl.appendChild(s);}
+
+// MANGA DATA
+const mangaData = [
+  {
+    id:1, title:'Kage no Sekai', author:'Aryan Sharma', emoji:'🌑', cover:'c1',
+    genre:'Action', rating:4.9, type:'free', chapters:5, views:'12K',
+    desc:'Ek aisa hero jo andhere mein rehta hai... uski shakti se koi anjaana nahi. Duniya ki sabse badi conspiracy unhe hi todna hogi.',
+    chapterList:[
+      {num:1,title:'Andhere Ka Aagaaz',date:'1 Jan',free:true},
+      {num:2,title:'Pehli Takkar',date:'8 Jan',free:true},
+      {num:3,title:'Raaz',date:'15 Jan',free:true},
+      {num:4,title:'Sach Ka Saamna',date:'22 Jan',free:true},
+      {num:5,title:'Antim Yuddh',date:'29 Jan',free:true},
+    ]
+  },
+  {
+    id:2, title:'Sakura Dreams', author:'Priya Verma', emoji:'🌸', cover:'c5',
+    genre:'Romance', rating:4.7, type:'free', chapters:8, views:'8.5K',
+    desc:'Ek school romance jo dil ko chu jaaye. Sakura aur Haruto ki kahani — jo sirf ek nazar se shuru hui thi...',
+    chapterList:[
+      {num:1,title:'Pehli Mulaqat',date:'5 Feb',free:true},
+      {num:2,title:'Confession',date:'12 Feb',free:true},
+      {num:3,title:'Valentine',date:'14 Feb',free:true},
+    ]
+  },
+  {
+    id:3, title:'Dragon Realm', author:'Vikram Rao', emoji:'🐉', cover:'c3',
+    genre:'Fantasy', rating:4.8, type:'paid', price:49, chapters:12, views:'25K',
+    desc:'Ek ancient dragon ki aatma ek insaan ke body mein aa gayi. Ab woh duniya ki sabse badi jang ke beech mein hai.',
+    chapterList:[
+      {num:1,title:'Dragon Ka Janam',date:'1 Dec',free:true},
+      {num:2,title:'Aag Ka Raaz',date:'8 Dec',free:true},
+      {num:3,title:'Pehli Shakti',date:'15 Dec',free:false},
+      {num:4,title:'Dushman Ka Saamna',date:'22 Dec',free:false},
+    ]
+  },
+  {
+    id:4, title:'Ghost Academy', author:'Sneha Joshi', emoji:'👻', cover:'c2',
+    genre:'Horror', rating:4.6, type:'paid', price:39, chapters:6, views:'9K',
+    desc:'Ek school jahan students ghosts se ladna sikhte hain. Lekin kya hoga jab ek ghost khud student ban jaaye?',
+    chapterList:[
+      {num:1,title:'Bhoot Ki School',date:'3 Mar',free:true},
+      {num:2,title:'Pehla Encounter',date:'10 Mar',free:true},
+      {num:3,title:'Dark Secret',date:'17 Mar',free:false},
+    ]
+  },
+  {
+    id:5, title:'Cyber Ninja', author:'Rahul Dev', emoji:'⚡', cover:'c6',
+    genre:'Action', rating:4.9, type:'free', chapters:10, views:'30K',
+    desc:'Future India mein ek ninja jo technology aur traditional skills dono use karta hai. Sabse dangerous mission — apna wujood bachana.',
+    chapterList:[
+      {num:1,title:'Future ka Yodha',date:'2 Feb',free:true},
+      {num:2,title:'Matrix Break',date:'9 Feb',free:true},
+      {num:3,title:'Cyber Attack',date:'16 Feb',free:true},
+    ]
+  },
+  {
+    id:6, title:'Forest Spirit', author:'Kavya Singh', emoji:'🌿', cover:'c4',
+    genre:'Slice of Life', rating:4.5, type:'paid', price:29, chapters:4, views:'5K',
+    desc:'Ek ladki jo jungle mein rehne wali spirits se baat kar sakti hai. Unke saath uski friendship ki warm aur beautiful kahani.',
+    chapterList:[
+      {num:1,title:'Jungal Ki Awaz',date:'10 Mar',free:true},
+      {num:2,title:'Pehla Dost',date:'17 Mar',free:false},
+    ]
+  },
+];
+
+// Manga page art templates (simulated pages with styled panels)
+const pageArts = [
+  {bg:'linear-gradient(135deg,#0a0a1a,#1a0533)',panels:[
+    {x:5,y:5,w:90,h:45,text:'',emoji:'⚔️',size:'4rem'},
+    {x:5,y:52,w:43,h:43,text:'WHOOSH!',emoji:'💨',size:'2rem',bang:true},
+    {x:50,y:52,w:45,h:43,text:'KRAK!',emoji:'⚡',size:'2rem',bang:true},
+  ]},
+  {bg:'linear-gradient(135deg,#0f172a,#1e3a5f)',panels:[
+    {x:5,y:5,w:43,h:90,text:'',emoji:'🌑',size:'5rem'},
+    {x:50,y:5,w:45,h:43,text:'...',emoji:'👁️',size:'3rem'},
+    {x:50,y:50,w:45,h:45,text:'BOOM!',emoji:'💥',size:'3rem',bang:true},
+  ]},
+  {bg:'linear-gradient(135deg,#1a0533,#310a6e)',panels:[
+    {x:5,y:5,w:90,h:30,text:'Aaj ka din alag hai...',emoji:'',size:'1.2rem',txt:true},
+    {x:5,y:37,w:43,h:58,text:'',emoji:'🗡️',size:'4rem'},
+    {x:50,y:37,w:45,h:58,text:'YAAH!!',emoji:'🔥',size:'2.5rem',bang:true},
+  ]},
+  {bg:'linear-gradient(135deg,#0a0a0a,#1a0020)',panels:[
+    {x:5,y:5,w:43,h:43,text:'',emoji:'😤',size:'4rem'},
+    {x:50,y:5,w:45,h:43,text:'',emoji:'😈',size:'4rem'},
+    {x:5,y:50,w:90,h:45,text:'FINAL SHOWDOWN!',emoji:'',size:'1.8rem',bang:true},
+  ]},
+  {bg:'linear-gradient(135deg,#0f0f0f,#1a1a2e)',panels:[
+    {x:5,y:5,w:90,h:60,text:'',emoji:'🌌',size:'5rem'},
+    {x:5,y:67,w:43,h:28,text:'Yeh nahi ho sakta...',emoji:'',size:'1rem',txt:true},
+    {x:50,y:67,w:45,h:28,text:'Ho sakta hai.',emoji:'',size:'1rem',txt:true},
+  ]},
+  {bg:'linear-gradient(135deg,#1a0a00,#2d1500)',panels:[
+    {x:5,y:5,w:43,h:90,text:'DRAGON ROAR!',emoji:'🐉',size:'3rem',bang:true},
+    {x:50,y:5,w:45,h:43,text:'',emoji:'😱',size:'4rem'},
+    {x:50,y:50,w:45,h:45,text:'RUUUN!',emoji:'💨',size:'2rem',bang:true},
+  ]},
+];
+
+let currentManga = null;
+let currentPages = [];
+let currentFlipPage = 0;
+let currentMode = 'scroll';
+
+// RENDER
+function renderManga(filter='all'){
+  const grid = document.getElementById('mangaGrid');
+  const filtered = filter==='all' ? mangaData : mangaData.filter(m=>m.type===filter);
+  grid.innerHTML = filtered.map((m,i)=>`
+    <div class="manga-card" style="animation-delay:${i*0.07}s" onclick="showDetail(${m.id})">
+      <div class="manga-cover ${m.cover}">
+        <span class="${m.type==='free'?'free-tag':'paid-tag'}">${m.type==='free'?'🆓 FREE':'💰 ₹'+m.price}</span>
+        <span style="font-size:4rem;position:relative;z-index:1;">${m.emoji}</span>
+        <span class="chapter-count">${m.chapters} chapters</span>
+      </div>
+      <div class="manga-info">
+        <h3>${m.title}</h3>
+        <div class="genre">${m.genre} • ${m.views} views</div>
+        <div class="rating">${'⭐'.repeat(Math.floor(m.rating))} ${m.rating}</div>
+        <div class="price-tag ${m.type}">${m.type==='free'?'🆓 Free':'💰 ₹'+m.price}</div>
+        <button class="read-btn">📖 Padho</button>
+      </div>
+    </div>`).join('');
+}
+
+function setFilter(f, el){
+  document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderManga(f);
+}
+
+// DETAIL VIEW
+function showDetail(id){
+  currentManga = mangaData.find(m=>m.id===id);
+  document.getElementById('listView').style.display='none';
+  document.getElementById('detailView').classList.add('show');
+  document.getElementById('uploadSection').style.display='none';
+
+  const m = currentManga;
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-hero">
+      <div class="detail-cover ${m.cover}" style="font-size:5rem;display:flex;align-items:center;justify-content:center;">${m.emoji}</div>
+      <div class="detail-meta" style="flex:1;">
+        <h2>${m.title}</h2>
+        <div style="color:#888;margin-bottom:0.5rem;">✍️ ${m.author}</div>
+        <div class="genre-pills">
+          <span class="genre-pill">${m.genre}</span>
+          <span class="genre-pill">${m.type==='free'?'🆓 Free':'💰 Paid'}</span>
+          <span class="genre-pill">👁️ ${m.views}</span>
+        </div>
+        <div class="desc">${m.desc}</div>
+        <div class="rating-row">${'⭐'.repeat(Math.floor(m.rating))} ${m.rating} rating</div>
+        <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+          <button class="read-btn" style="width:auto;padding:0.7rem 1.5rem;" onclick="openReader(${m.id}, 0)">📖 Pehla Chapter Padho</button>
+          ${m.type==='paid'?`<div style="background:var(--yellow)22;border:1px solid var(--yellow);border-radius:8px;padding:0.7rem 1rem;color:var(--yellow);font-weight:700;font-size:0.9rem;">💰 Full access: ₹${m.price}</div>`:''}
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:1rem;color:var(--purple);">📋 Chapters (${m.chapterList.length})</h3>
+    <div class="chapter-list">
+      ${m.chapterList.map((ch,i)=>`
+        <div class="chapter-item" onclick="openReader(${m.id}, ${i})">
+          <div class="ch-left">
+            <span class="ch-num">Ch.${ch.num}</span>
+            <div>
+              <div class="ch-title">${ch.title}</div>
+              <div class="ch-date">${ch.date}</div>
+            </div>
+          </div>
+          <span class="ch-badge ${ch.free?'ch-free':'ch-paid'}">${ch.free?'🆓 Free':'🔒 Paid'}</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+function backToList(){
+  document.getElementById('listView').style.display='block';
+  document.getElementById('detailView').classList.remove('show');
+}
+
+// READER
+function openReader(mangaId, chapterIdx){
+  const m = mangaData.find(x=>x.id===mangaId);
+  const ch = m.chapterList[chapterIdx];
+  const isFree = m.type==='free' || ch.free;
+  const totalPages = 6;
+  const previewPages = 2; // paid manga mein sirf 2 pages free
+
+  currentManga = m;
+  currentPages = Array.from({length: isFree ? totalPages : totalPages}, (_,i)=>i);
+  currentFlipPage = 0;
+
+  document.getElementById('readerTitle').textContent = m.title;
+  document.getElementById('readerChapter').textContent = `Chapter ${ch.num}: ${ch.title}`;
+
+  // Build pages
+  const scrollPages = document.getElementById('scrollPages');
+  scrollPages.innerHTML = '';
+
+  for(let i=0;i<totalPages;i++){
+    const isBlurred = !isFree && i >= previewPages;
+    const art = pageArts[i % pageArts.length];
+
+    if(isBlurred && i===previewPages){
+      // Paywall page
+      const pw = document.createElement('div');
+      pw.className = 'manga-page-img paywall';
+      pw.style.maxWidth='700px';pw.style.width='100%';
+      pw.innerHTML = `
+        <div class="paywall-blur">${buildPageArt(art, i+1)}</div>
+        <div class="paywall-overlay">
+          <div class="paywall-box">
+            <span class="lock">🔒</span>
+            <h3>Aage Padhne ke liye Unlock Karo!</h3>
+            <p>Yeh manga paid hai. Sirf <strong style="color:var(--yellow)">₹${m.price}</strong> mein poora manga padho — sab chapters unlocked!</p>
+            <button class="unlock-btn" onclick="buyManga()">💰 ₹${m.price} mein Unlock Karo</button>
+          </div>
+        </div>`;
+      scrollPages.appendChild(pw);
+      break;
+    }
+
+    const pageDiv = document.createElement('div');
+    pageDiv.className = 'manga-page-img';
+    pageDiv.style.maxWidth='700px';pageDiv.style.width='100%';
+    pageDiv.innerHTML = buildPageArt(art, i+1);
+    scrollPages.appendChild(pageDiv);
+  }
+
+  // Flip mode pages
+  renderFlipPage(isFree, previewPages, m);
+
+  document.getElementById('readerOverlay').classList.add('open');
+  setMode('scroll');
+}
+
+function buildPageArt(art, pageNum){
+  return `<div class="page-art" style="background:${art.bg};width:100%;min-height:500px;position:relative;">
+    ${art.panels.map(p=>`
+      <div style="position:absolute;left:${p.x}%;top:${p.y}%;width:${p.w}%;height:${p.h}%;
+        border:2px solid #ffffff22;display:flex;align-items:center;justify-content:center;
+        flex-direction:column;overflow:hidden;background:#00000033;">
+        ${p.emoji?`<span style="font-size:${p.size};line-height:1;">${p.emoji}</span>`:''}
+        ${p.text?`<span style="font-family:${p.bang?'Bangers':'Nunito'},sans-serif;font-size:${p.size};
+          color:${p.bang?'#fff':'#ddd'};text-align:center;padding:0.5rem;
+          text-shadow:${p.bang?'0 0 10px var(--pink)':'none'};
+          letter-spacing:${p.bang?'2px':'0'};">${p.text}</span>`:''}
+      </div>`).join('')}
+    <div class="page-num-label">Page ${pageNum}</div>
+  </div>`;
+}
+
+function renderFlipPage(isFree, previewPages, m){
+  // handled dynamically in flipPage()
+}
+
+let flipPages = [];
+function setMode(mode){
+  currentMode = mode;
+  const scrollEl = document.getElementById('scrollMode');
+  const flipEl = document.getElementById('flipMode');
+  document.getElementById('scrollBtn').classList.toggle('active-mode', mode==='scroll');
+  document.getElementById('flipBtn').classList.toggle('active-mode', mode==='flip');
+
+  if(mode==='scroll'){
+    scrollEl.style.display='block';
+    flipEl.classList.remove('active');
+  } else {
+    scrollEl.style.display='none';
+    flipEl.classList.add('active');
+    showFlipPage(0);
+  }
+}
+
+function showFlipPage(idx){
+  const m = currentManga;
+  const isFree = m.type==='free';
+  const previewPages = 2;
+  const totalPages = 6;
+
+  if(!isFree && idx >= previewPages){
+    document.getElementById('flipPageWrap').innerHTML = `
+      <div style="text-align:center;padding:3rem 2rem;">
+        <div style="font-size:3rem;margin-bottom:1rem;">🔒</div>
+        <h3 style="color:var(--yellow);margin-bottom:0.5rem;">Unlock Required!</h3>
+        <p style="color:#888;margin-bottom:1.5rem;">Baaki pages ke liye ₹${m.price} mein unlock karo</p>
+        <button class="unlock-btn" onclick="buyManga()">💰 Unlock Karo</button>
+      </div>`;
+    document.getElementById('nextBtn').disabled = true;
+  } else {
+    const art = pageArts[idx % pageArts.length];
+    document.getElementById('flipPageWrap').innerHTML = buildPageArt(art, idx+1);
+    document.getElementById('nextBtn').disabled = !isFree && idx+1 >= previewPages;
+  }
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('flipCounter').textContent = `Page ${idx+1} / ${isFree?totalPages:previewPages+'+'}`;
+  currentFlipPage = idx;
+}
+
+function flipPage(dir){
+  const newIdx = currentFlipPage + dir;
+  if(newIdx < 0) return;
+  showFlipPage(newIdx);
+}
+
+function updateProgress(){
+  const el = document.getElementById('scrollMode');
+  const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+  document.getElementById('progressFill').style.width = Math.min(pct,100)+'%';
+}
+
+function closeReader(){
+  document.getElementById('readerOverlay').classList.remove('open');
+  document.getElementById('scrollMode').scrollTop = 0;
+}
+
+function buyManga(){
+  alert(`💰 Payment gateway yahan connect hoga!\n\nAbhi ke liye: ₹${currentManga.price} ke liye payment system add karna hoga (Razorpay ya UPI).`);
+}
+
+// UPLOAD
+function showUpload(){
+  document.getElementById('listView').style.display='none';
+  document.getElementById('detailView').classList.remove('show');
+  document.getElementById('uploadSection').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function hideUpload(){
+  document.getElementById('uploadSection').style.display='none';
+  document.getElementById('listView').style.display='block';
+}
+
+document.getElementById('mType').addEventListener('change',function(){
+  document.getElementById('priceGroup').style.display = this.value==='paid'?'block':'none';
+});
+
+function countPages(){
+  const files = document.getElementById('pagesInput').files;
+  document.getElementById('pagesCount').textContent = `✅ ${files.length} pages select ki gayi hain`;
+}
+
+function submitManga(){
+  const name = document.getElementById('mName').value;
+  const author = document.getElementById('mAuthor').value;
+  const pages = document.getElementById('pagesInput').files;
+  if(!name){alert('Manga ka naam daalo!');return;}
+  if(!author){alert('Author ka naam daalo!');return;}
+  if(pages.length===0){alert('Pages upload karo!');return;}
+  showToast('🎌 Manga submit ho gayi! Review ke baad live hogi.');
+  hideUpload();
+  document.getElementById('mName').value='';
+  document.getElementById('mAuthor').value='';
+  document.getElementById('pagesCount').textContent='';
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// Keyboard navigation in reader
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('readerOverlay').classList.contains('open')) return;
+  if(e.key==='Escape') closeReader();
+  if(currentMode==='flip'){
+    if(e.key==='ArrowRight') flipPage(1);
+    if(e.key==='ArrowLeft') flipPage(-1);
+  }
+});
+
+renderManga();
+</script>
+</body>
+</html>

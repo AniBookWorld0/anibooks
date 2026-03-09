@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📤 AniBooks - Apni Book Becho</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #ff6b9d;
+    --purple: #c084fc;
+    --blue: #60a5fa;
+    --green: #34d399;
+    --dark: #0d0d1a;
+    --darker: #070710;
+    --card: #13132a;
+    --card2: #1a1a35;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--darker);
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Stars */
+  .stars {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0; pointer-events: none;
+  }
+  .star {
+    position: absolute; width: 2px; height: 2px;
+    background: white; border-radius: 50%;
+    animation: twinkle 3s infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; } 50% { opacity: 1; }
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; width: 100%;
+    z-index: 100; padding: 1rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+    background: #070710ee; backdrop-filter: blur(10px);
+    border-bottom: 1px solid #ffffff11;
+  }
+  .logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.3rem;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .nav-back {
+    color: #aaa; text-decoration: none; font-weight: 600;
+    transition: color 0.3s;
+  }
+  .nav-back:hover { color: var(--pink); }
+
+  /* MAIN LAYOUT */
+  .main {
+    position: relative; z-index: 2;
+    padding: 7rem 2rem 4rem;
+    max-width: 1100px; margin: 0 auto;
+  }
+
+  /* PAGE HEADER */
+  .page-header {
+    text-align: center; margin-bottom: 3rem;
+    animation: fadeInDown 0.8s ease;
+  }
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .page-header .icon { font-size: 4rem; display: block; margin-bottom: 1rem; }
+  .page-header h1 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    background: linear-gradient(135deg, var(--pink), var(--purple), var(--blue));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  .page-header p { color: #888; font-size: 1.1rem; }
+
+  /* FREE BADGE */
+  .free-notice {
+    background: linear-gradient(135deg, #10b98111, #34d39911);
+    border: 1px solid #10b98144;
+    border-radius: 16px; padding: 1rem 2rem;
+    text-align: center; margin-bottom: 2rem;
+    color: var(--green); font-weight: 700; font-size: 1rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 #34d39922; }
+    50% { box-shadow: 0 0 20px 5px #34d39922; }
+  }
+
+  /* TWO COLUMN */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    animation: fadeInUp 0.8s ease 0.2s both;
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* FORM CARD */
+  .form-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid #ffffff11;
+  }
+  .form-card h2 {
+    font-size: 1.3rem; margin-bottom: 1.5rem;
+    color: var(--pink); display: flex; align-items: center; gap: 0.5rem;
+  }
+
+  .form-group { margin-bottom: 1.2rem; }
+  .form-group label {
+    display: block; font-weight: 600; color: #ccc;
+    margin-bottom: 0.4rem; font-size: 0.9rem;
+  }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: var(--card2);
+    border: 1px solid #ffffff22;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    border-color: var(--pink);
+    box-shadow: 0 0 15px #ff6b9d33;
+  }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .form-group select option { background: var(--dark); }
+
+  /* Upload Area */
+  .upload-area {
+    border: 2px dashed #ffffff33;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: var(--card2);
+  }
+  .upload-area:hover, .upload-area.dragover {
+    border-color: var(--purple);
+    background: #c084fc11;
+    box-shadow: 0 0 20px #c084fc33;
+  }
+  .upload-area .upload-icon { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
+  .upload-area p { color: #888; font-size: 0.9rem; }
+  .upload-area span { color: var(--purple); font-weight: 700; }
+  .upload-area input { display: none; }
+
+  /* Price Toggle */
+  .price-toggle {
+    display: flex; gap: 0.5rem; margin-bottom: 1rem;
+  }
+  .price-btn {
+    flex: 1; padding: 0.6rem;
+    border-radius: 8px; border: 1px solid #333;
+    background: var(--card2); color: #aaa;
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    font-weight: 700; transition: all 0.3s;
+  }
+  .price-btn.active {
+    border-color: var(--pink); color: var(--pink);
+    background: #ff6b9d11;
+  }
+
+  /* PREVIEW CARD */
+  .preview-card {
+    background: var(--card);
+    border-radius: 20px; padding: 2rem;
+    border: 1px solid #ffffff11;
+  }
+  .preview-card h2 {
+    font-size: 1.3rem; margin-bottom: 1.5rem;
+    color: var(--purple); display: flex; align-items: center; gap: 0.5rem;
+  }
+
+  .book-preview {
+    background: var(--card2);
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid #ffffff11;
+    margin-bottom: 1.5rem;
+  }
+  .preview-cover {
+    height: 180px;
+    background: linear-gradient(135deg, #2d1b69, #c084fc44);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem; position: relative;
+  }
+  .preview-body { padding: 1.2rem; }
+  .preview-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .preview-author { color: #888; font-size: 0.85rem; margin-bottom: 0.8rem; }
+  .preview-price {
+    font-size: 1.3rem; font-weight: 800;
+    color: var(--green);
+  }
+  .preview-price.free { color: var(--blue); }
+
+  /* EARNINGS INFO */
+  .earnings-box {
+    background: linear-gradient(135deg, #ff6b9d11, #c084fc11);
+    border: 1px solid #ff6b9d33;
+    border-radius: 12px; padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .earnings-row {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+  .earnings-row:last-child { margin-bottom: 0; }
+  .earnings-row .label { color: #aaa; }
+  .earnings-row .value { font-weight: 700; color: var(--green); }
+  .earnings-row .value.zero { color: var(--green); }
+  .divider { border: none; border-top: 1px solid #ffffff11; margin: 0.5rem 0; }
+
+  /* HOW IT WORKS */
+  .how-it-works {
+    margin-top: 3rem;
+    animation: fadeInUp 0.8s ease 0.4s both;
+  }
+  .how-it-works h2 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.5rem;
+    text-align: center;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 2rem;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+  .step-card {
+    background: var(--card);
+    border-radius: 16px; padding: 1.5rem;
+    border: 1px solid #ffffff11;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .step-card:hover {
+    border-color: var(--purple);
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px #c084fc33;
+  }
+  .step-num {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 1rem;
+    margin: 0 auto 1rem;
+  }
+  .step-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+  .step-card h3 { color: var(--pink); margin-bottom: 0.5rem; font-size: 1rem; }
+  .step-card p { color: #888; font-size: 0.85rem; line-height: 1.5; }
+
+  /* SUBMIT BTN */
+  .submit-btn {
+    width: 100%; padding: 1rem;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    border: none; border-radius: 12px;
+    color: white; font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem; font-weight: 800;
+    cursor: pointer; transition: all 0.3s;
+    box-shadow: 0 0 20px #ff6b9d44;
+  }
+  .submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 30px #ff6b9d88;
+  }
+
+  /* SUCCESS MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: #000000aa;
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: none;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--card);
+    border-radius: 24px; padding: 3rem 2rem;
+    text-align: center; max-width: 400px; width: 90%;
+    border: 1px solid var(--green);
+    box-shadow: 0 0 40px #34d39944;
+    animation: popIn 0.4s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .modal .success-icon { font-size: 4rem; display: block; margin-bottom: 1rem; }
+  .modal h2 { color: var(--green); margin-bottom: 0.5rem; }
+  .modal p { color: #aaa; margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.6; }
+  .modal-btn {
+    padding: 0.8rem 2rem;
+    background: linear-gradient(135deg, var(--green), #059669);
+    border: none; border-radius: 50px;
+    color: white; font-family: 'Nunito', sans-serif;
+    font-weight: 700; cursor: pointer; font-size: 1rem;
+  }
+
+  /* UPI Info */
+  .upi-info {
+    background: var(--card2);
+    border-radius: 10px; padding: 1rem;
+    margin-top: 0.5rem;
+    border: 1px solid #60a5fa33;
+    font-size: 0.85rem; color: #aaa;
+  }
+  .upi-info strong { color: var(--blue); }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<nav>
+  <div class="logo">📚 AniBooks</div>
+  <a href="home.html" class="nav-back">← Wapas Jao</a>
+  <a href="login.html" style="background: linear-gradient(135deg, #ff6b9d, #c084fc); padding: 0.4rem 1rem; border-radius: 20px; color: white; font-weight: 800; text-decoration: none; font-size: 0.9rem;">🔐 Login</a>
+</nav>
+
+<div class="main">
+
+  <!-- Header -->
+  <div class="page-header">
+    <span class="icon">💰</span>
+    <h1>Apni Book Becho</h1>
+    <p>Upload karo, price set karo, aur seedha paise kamao!</p>
+  </div>
+
+  <!-- Free Notice -->
+  <div class="free-notice">
+    🎉 Abhi bilkul FREE! Koi commission nahi, koi charge nahi — 100% tumhara paisa tumhara!
+  </div>
+
+  <!-- Main Form + Preview -->
+  <div class="two-col">
+
+    <!-- FORM -->
+    <div class="form-card">
+      <h2>📝 Book Details</h2>
+
+      <div class="form-group">
+        <label>📖 Book Ka Naam *</label>
+        <input type="text" id="bookTitle" placeholder="Jaise: Meri Pehli Kahani" oninput="updatePreview()">
+      </div>
+
+      <div class="form-group">
+        <label>✍️ Author Ka Naam *</label>
+        <input type="text" id="authorName" placeholder="Tumhara naam" oninput="updatePreview()">
+      </div>
+
+      <div class="form-group">
+        <label>📚 Category</label>
+        <select id="category" oninput="updatePreview()">
+          <option value="">Category chunno...</option>
+          <option>📖 Novel / Kahani</option>
+          <option>🔬 Science</option>
+          <option>💼 Business</option>
+          <option>🧘 Self Help</option>
+          <option>📚 Education</option>
+          <option>🎭 Poetry / Shayari</option>
+          <option>🌏 Travel</option>
+          <option>👨‍👩‍👧 Children</option>
+          <option>🕌 Religious</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>📝 Book Ki Description</label>
+        <textarea id="description" placeholder="Thodi si jankari apni book ke baare mein..."></textarea>
+      </div>
+
+      <!-- PRICE -->
+      <div class="form-group">
+        <label>💰 Price Type</label>
+        <div class="price-toggle">
+          <button class="price-btn" id="paidBtn" onclick="setPriceType('paid')">💰 Paid</button>
+          <button class="price-btn active" id="freeBtn" onclick="setPriceType('free')">🆓 Free</button>
+        </div>
+        <div id="priceInput" style="display:none;">
+          <input type="number" id="bookPrice" placeholder="Price (₹)" min="1" oninput="updatePreview()">
+          <div class="upi-info">
+            💡 <strong>Paise kaise milenge?</strong> Tumhara UPI ID daal do — jab bhi koi buy karega, seedha tumhare account mein jayenge!
+          </div>
+          <div class="form-group" style="margin-top: 0.8rem; margin-bottom: 0;">
+            <label>📱 Tumhara UPI ID</label>
+            <input type="text" id="upiId" placeholder="Jaise: name@upi ya 9876543210@paytm">
+          </div>
+        </div>
+      </div>
+
+      <!-- PDF UPLOAD -->
+      <div class="form-group">
+        <label>📄 Book File Upload (PDF)</label>
+        <div class="upload-area" id="pdfUpload" onclick="document.getElementById('pdfFile').click()"
+          ondragover="event.preventDefault(); this.classList.add('dragover')"
+          ondragleave="this.classList.remove('dragover')"
+          ondrop="handleDrop(event, 'pdf')">
+          <span class="upload-icon">📄</span>
+          <p><span>Click karo ya drag karo</span> PDF yahan</p>
+          <p id="pdfName" style="color: var(--green); margin-top: 0.5rem; font-weight: 700;"></p>
+          <input type="file" id="pdfFile" accept=".pdf" onchange="showFileName('pdfFile', 'pdfName')">
+        </div>
+      </div>
+
+      <!-- COVER UPLOAD -->
+      <div class="form-group">
+        <label>🖼️ Cover Image (Optional)</label>
+        <div class="upload-area" onclick="document.getElementById('coverFile').click()"
+          ondragover="event.preventDefault(); this.classList.add('dragover')"
+          ondragleave="this.classList.remove('dragover')">
+          <span class="upload-icon">🖼️</span>
+          <p><span>Click karo</span> cover image ke liye</p>
+          <p id="coverName" style="color: var(--green); margin-top: 0.5rem; font-weight: 700;"></p>
+          <input type="file" id="coverFile" accept="image/*" onchange="showFileName('coverFile', 'coverName'); previewCover()">
+        </div>
+      </div>
+
+      <button class="submit-btn" onclick="submitBook()">
+        🚀 Book Submit Karo — Aur Kamao!
+      </button>
+    </div>
+
+    <!-- PREVIEW + EARNINGS -->
+    <div>
+      <div class="preview-card" style="margin-bottom: 1.5rem;">
+        <h2>👁️ Preview</h2>
+        <div class="book-preview">
+          <div class="preview-cover" id="previewCover">
+            <span id="previewEmoji">📚</span>
+          </div>
+          <div class="preview-body">
+            <div class="preview-title" id="previewTitle">Tumhari Book Ka Naam</div>
+            <div class="preview-author" id="previewAuthor">Tumhara Naam</div>
+            <div class="preview-price free" id="previewPrice">🆓 Free</div>
+          </div>
+        </div>
+
+        <!-- EARNINGS -->
+        <div class="earnings-box">
+          <div class="earnings-row">
+            <span class="label">Book Price</span>
+            <span class="value" id="earnPrice">Free</span>
+          </div>
+          <hr class="divider">
+          <div class="earnings-row">
+            <span class="label">AniBooks Commission</span>
+            <span class="value zero">₹0 (Abhi Free!)</span>
+          </div>
+          <hr class="divider">
+          <div class="earnings-row">
+            <span class="label" style="font-weight: 700; color: #fff;">Tumhari Earning</span>
+            <span class="value" id="earnYours" style="font-size: 1.1rem;">₹0 (Free book)</span>
+          </div>
+        </div>
+
+        <div style="background: #60a5fa11; border: 1px solid #60a5fa33; border-radius: 10px; padding: 1rem; font-size: 0.85rem; color: #aaa; line-height: 1.6;">
+          💡 <strong style="color: var(--blue)">Future Plan:</strong> Jab website viral hogi, tabhi hum thoda sa commission lenge. Abhi sab kuch tumhara hai!
+        </div>
+      </div>
+
+      <!-- Author Benefits -->
+      <div class="preview-card">
+        <h2>🌟 Author Benefits</h2>
+        <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+          <div style="display: flex; align-items: center; gap: 0.8rem; background: var(--card2); padding: 0.8rem; border-radius: 10px;">
+            <span style="font-size: 1.5rem;">💸</span>
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem;">100% Earnings Tumhari</div>
+              <div style="color: #888; font-size: 0.8rem;">Koi platform cut nahi abhi</div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.8rem; background: var(--card2); padding: 0.8rem; border-radius: 10px;">
+            <span style="font-size: 1.5rem;">📊</span>
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem;">Sales Dashboard</div>
+              <div style="color: #888; font-size: 0.8rem;">Dekho kitne log padh rahe hain</div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.8rem; background: var(--card2); padding: 0.8rem; border-radius: 10px;">
+            <span style="font-size: 1.5rem;">🌏</span>
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem;">Lakho Readers</div>
+              <div style="color: #888; font-size: 0.8rem;">AniBooks ke saare readers tak pahuncho</div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.8rem; background: var(--card2); padding: 0.8rem; border-radius: 10px;">
+            <span style="font-size: 1.5rem;">⚡</span>
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem;">Instant UPI Payment</div>
+              <div style="color: #888; font-size: 0.8rem;">Seedha tumhare UPI mein</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how-it-works">
+    <h2>🎯 Kaise Kaam Karta Hai?</h2>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <span class="step-icon">📝</span>
+        <h3>Details Bharo</h3>
+        <p>Book ka naam, description aur price set karo</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <span class="step-icon">📤</span>
+        <h3>PDF Upload Karo</h3>
+        <p>Apni book PDF format mein upload karo</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <span class="step-icon">🌟</span>
+        <h3>Live Ho Jao</h3>
+        <p>Tumhari book AniBooks pe publish ho jayegi</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <span class="step-icon">💰</span>
+        <h3>Paise Kamao</h3>
+        <p>Har sale pe seedha UPI mein paise aayenge</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal">
+    <span class="success-icon">🎉</span>
+    <h2>Book Submit Ho Gayi!</h2>
+    <p>Tumhari book review ke baad <strong style="color: var(--green)">24 ghante</strong> mein live ho jayegi. Readers tumhari book padhenge aur paise seedha tumhare UPI mein aayenge!</p>
+    <button class="modal-btn" onclick="closeModal()">✨ Shukriya!</button>
+  </div>
+</div>
+
+<script>
+// Stars
+const starsEl = document.getElementById('stars');
+for (let i = 0; i < 100; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  s.style.left = Math.random() * 100 + '%';
+  s.style.top = Math.random() * 100 + '%';
+  s.style.animationDelay = Math.random() * 3 + 's';
+  starsEl.appendChild(s);
+}
+
+let priceType = 'free';
+
+function setPriceType(type) {
+  priceType = type;
+  document.getElementById('paidBtn').classList.toggle('active', type === 'paid');
+  document.getElementById('freeBtn').classList.toggle('active', type === 'free');
+  document.getElementById('priceInput').style.display = type === 'paid' ? 'block' : 'none';
+  updatePreview();
+}
+
+function updatePreview() {
+  const title = document.getElementById('bookTitle').value || 'Tumhari Book Ka Naam';
+  const author = document.getElementById('authorName').value || 'Tumhara Naam';
+  const price = document.getElementById('bookPrice') ? parseInt(document.getElementById('bookPrice').value) || 0 : 0;
+
+  document.getElementById('previewTitle').textContent = title;
+  document.getElementById('previewAuthor').textContent = 'by ' + author;
+
+  const priceEl = document.getElementById('previewPrice');
+  const earnPrice = document.getElementById('earnPrice');
+  const earnYours = document.getElementById('earnYours');
+
+  if (priceType === 'free') {
+    priceEl.textContent = '🆓 Free';
+    priceEl.className = 'preview-price free';
+    earnPrice.textContent = 'Free';
+    earnYours.textContent = '₹0 (Free book)';
+  } else {
+    priceEl.textContent = '₹' + (price || '??');
+    priceEl.className = 'preview-price';
+    earnPrice.textContent = price ? '₹' + price : '₹??';
+    earnYours.textContent = price ? '₹' + price + ' (100%)' : '₹??';
+  }
+}
+
+function showFileName(inputId, nameId) {
+  const file = document.getElementById(inputId).files[0];
+  if (file) document.getElementById(nameId).textContent = '✅ ' + file.name;
+}
+
+function previewCover() {
+  const file = document.getElementById('coverFile').files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const cover = document.getElementById('previewCover');
+      cover.style.backgroundImage = `url(${e.target.result})`;
+      cover.style.backgroundSize = 'cover';
+      cover.style.backgroundPosition = 'center';
+      document.getElementById('previewEmoji').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function handleDrop(e, type) {
+  e.preventDefault();
+  document.getElementById('pdfUpload').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type === 'application/pdf') {
+    document.getElementById('pdfName').textContent = '✅ ' + file.name;
+  }
+}
+
+function submitBook() {
+  const title = document.getElementById('bookTitle').value;
+  const author = document.getElementById('authorName').value;
+  const pdf = document.getElementById('pdfFile').files[0];
+
+  if (!title) { alert('📖 Book ka naam daalo!'); return; }
+  if (!author) { alert('✍️ Author ka naam daalo!'); return; }
+  if (!pdf) { alert('📄 PDF upload karo!'); return; }
+  if (priceType === 'paid' && !document.getElementById('upiId').value) {
+    alert('📱 UPI ID daalo taaki paise aa sakein!'); return;
+  }
+
+  document.getElementById('successModal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('successModal').classList.remove('show');
+}
+</script>
+</body>
+</html>

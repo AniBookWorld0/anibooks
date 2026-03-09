@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💬 Reviews - AniBooks</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--pink:#ff6b9d;--purple:#c084fc;--blue:#60a5fa;--green:#34d399;--yellow:#fbbf24;--darker:#070710;--card:#13132a;--card2:#1a1a35;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--darker);color:#fff;font-family:'Nunito',sans-serif;overflow-x:hidden;}
+  .stars{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+  .star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;animation:twinkle 3s infinite;}
+  @keyframes twinkle{0%,100%{opacity:0.2;}50%{opacity:1;}}
+  nav{position:sticky;top:0;z-index:100;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;background:#070710ee;backdrop-filter:blur(10px);border-bottom:1px solid #ffffff11;}
+  .logo{font-family:'Cinzel Decorative',serif;font-size:1.2rem;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .nav-back{color:#aaa;text-decoration:none;font-weight:600;transition:color 0.3s;}
+  .nav-back:hover{color:var(--pink);}
+  .main{position:relative;z-index:2;padding:2rem;max-width:900px;margin:0 auto;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-15px)}to{opacity:1;transform:translateY(0)}}
+
+  /* BOOK HERO */
+  .book-hero{
+    background:var(--card);border-radius:20px;padding:1.5rem;
+    display:flex;gap:1.5rem;align-items:center;margin-bottom:2rem;
+    border:1px solid #ffffff11;animation:fadeIn 0.6s ease;flex-wrap:wrap;
+  }
+  .book-cover-big{
+    width:120px;height:160px;border-radius:12px;flex-shrink:0;
+    background:linear-gradient(135deg,#2d1b69,#c084fc44);
+    display:flex;align-items:center;justify-content:center;font-size:4rem;
+  }
+  .book-meta h2{font-size:1.5rem;margin-bottom:0.3rem;}
+  .book-meta .author{color:#888;margin-bottom:0.8rem;}
+  .rating-big{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;}
+  .stars-big{font-size:1.5rem;letter-spacing:2px;}
+  .rating-num{font-size:2rem;font-weight:800;color:var(--yellow);}
+  .rating-count{color:#888;font-size:0.9rem;}
+  .book-price{font-size:1.3rem;font-weight:800;color:var(--green);margin-bottom:1rem;}
+  .buy-btn{
+    padding:0.7rem 1.5rem;background:linear-gradient(135deg,var(--pink),var(--purple));
+    border:none;border-radius:50px;color:white;font-family:'Nunito',sans-serif;
+    font-weight:800;cursor:pointer;transition:all 0.3s;
+  }
+  .buy-btn:hover{transform:translateY(-2px);box-shadow:0 0 20px #ff6b9d55;}
+
+  /* RATING BREAKDOWN */
+  .rating-breakdown{
+    background:var(--card);border-radius:16px;padding:1.5rem;
+    margin-bottom:2rem;border:1px solid #ffffff11;animation:fadeIn 0.6s ease 0.1s both;
+  }
+  .rating-breakdown h3{margin-bottom:1rem;color:var(--purple);}
+  .rating-bar-row{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.5rem;}
+  .rating-bar-row .stars-label{font-size:0.85rem;color:#888;width:30px;text-align:right;}
+  .rating-bar-track{flex:1;height:8px;background:#ffffff11;border-radius:4px;overflow:hidden;}
+  .rating-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--orange));transition:width 1s ease;}
+  .rating-bar-row .count{font-size:0.8rem;color:#888;width:30px;}
+
+  /* WRITE REVIEW */
+  .write-review{
+    background:var(--card);border-radius:16px;padding:1.5rem;
+    margin-bottom:2rem;border:1px solid #ff6b9d22;animation:fadeIn 0.6s ease 0.2s both;
+  }
+  .write-review h3{margin-bottom:1rem;color:var(--pink);}
+  .star-select{display:flex;gap:0.3rem;margin-bottom:1rem;cursor:pointer;}
+  .star-select span{font-size:2rem;transition:transform 0.2s;filter:grayscale(1);}
+  .star-select span.active{filter:none;transform:scale(1.15);}
+  .star-select span:hover{transform:scale(1.2);}
+  .review-input{
+    width:100%;padding:0.8rem 1rem;background:var(--card2);
+    border:1px solid #ffffff22;border-radius:10px;color:#fff;
+    font-family:'Nunito',sans-serif;font-size:0.95rem;outline:none;
+    resize:vertical;min-height:100px;transition:border-color 0.3s;
+    margin-bottom:1rem;
+  }
+  .review-input:focus{border-color:var(--pink);box-shadow:0 0 15px #ff6b9d22;}
+  .reviewer-name{
+    width:100%;padding:0.7rem 1rem;background:var(--card2);
+    border:1px solid #ffffff22;border-radius:10px;color:#fff;
+    font-family:'Nunito',sans-serif;font-size:0.9rem;outline:none;
+    transition:border-color 0.3s;margin-bottom:1rem;
+  }
+  .reviewer-name:focus{border-color:var(--pink);}
+  .submit-review-btn{
+    padding:0.7rem 2rem;background:linear-gradient(135deg,var(--pink),var(--purple));
+    border:none;border-radius:50px;color:white;font-family:'Nunito',sans-serif;
+    font-weight:800;cursor:pointer;transition:all 0.3s;
+  }
+  .submit-review-btn:hover{transform:translateY(-2px);box-shadow:0 0 20px #ff6b9d55;}
+
+  /* REVIEWS LIST */
+  .reviews-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+  .reviews-header h3{color:#fff;font-size:1.1rem;}
+  .sort-select{
+    background:var(--card2);border:1px solid #333;color:#aaa;
+    padding:0.4rem 0.8rem;border-radius:8px;font-family:'Nunito',sans-serif;
+    font-size:0.85rem;outline:none;cursor:pointer;
+  }
+
+  .review-card{
+    background:var(--card);border-radius:14px;padding:1.2rem;
+    border:1px solid #ffffff11;margin-bottom:1rem;
+    transition:all 0.3s;animation:fadeIn 0.4s ease both;
+  }
+  .review-card:hover{border-color:var(--purple);transform:translateX(4px);}
+  .review-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6rem;}
+  .reviewer{display:flex;align-items:center;gap:0.7rem;}
+  .reviewer-avatar{
+    width:38px;height:38px;border-radius:50%;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.1rem;flex-shrink:0;
+  }
+  .reviewer-name-disp{font-weight:700;font-size:0.95rem;}
+  .reviewer-date{color:#666;font-size:0.75rem;}
+  .review-stars{color:var(--yellow);letter-spacing:2px;}
+  .review-text{color:#ccc;font-size:0.9rem;line-height:1.6;margin-bottom:0.8rem;}
+  .review-helpful{display:flex;align-items:center;gap:0.5rem;}
+  .helpful-btn{
+    background:var(--card2);border:1px solid #333;color:#888;
+    padding:0.3rem 0.8rem;border-radius:20px;font-size:0.8rem;
+    cursor:pointer;transition:all 0.2s;font-family:'Nunito',sans-serif;
+  }
+  .helpful-btn:hover{border-color:var(--green);color:var(--green);}
+  .verified-badge{background:#34d39911;color:var(--green);border:1px solid var(--green);
+    padding:0.15rem 0.5rem;border-radius:20px;font-size:0.7rem;font-weight:700;}
+
+  .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);
+    background:var(--card);border:1px solid var(--green);color:var(--green);
+    padding:0.8rem 2rem;border-radius:50px;font-weight:700;z-index:9999;
+    transition:transform 0.3s;box-shadow:0 0 20px #34d39933;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<nav>
+  <div class="logo">📚 AniBooks</div>
+  <a href="home.html" class="nav-back">← Home</a>
+</nav>
+
+<div class="main">
+
+  <!-- BOOK HERO -->
+  <div class="book-hero">
+    <div class="book-cover-big">🌸</div>
+    <div class="book-meta">
+      <h2>Meri Pehli Kahani</h2>
+      <div class="author">✍️ Rahul Kumar • Novel</div>
+      <div class="rating-big">
+        <div class="rating-num">4.8</div>
+        <div>
+          <div class="stars-big">⭐⭐⭐⭐⭐</div>
+          <div class="rating-count">127 reviews</div>
+        </div>
+      </div>
+      <div class="book-price">₹99</div>
+      <button class="buy-btn">🛒 Abhi Kharido</button>
+    </div>
+  </div>
+
+  <!-- RATING BREAKDOWN -->
+  <div class="rating-breakdown">
+    <h3>⭐ Rating Breakdown</h3>
+    <div id="ratingBars"></div>
+  </div>
+
+  <!-- WRITE REVIEW -->
+  <div class="write-review">
+    <h3>✍️ Apna Review Likho</h3>
+    <div class="star-select" id="starSelect">
+      <span onclick="setRating(1)">⭐</span>
+      <span onclick="setRating(2)">⭐</span>
+      <span onclick="setRating(3)">⭐</span>
+      <span onclick="setRating(4)">⭐</span>
+      <span onclick="setRating(5)">⭐</span>
+    </div>
+    <input class="reviewer-name" id="reviewerName" placeholder="👤 Tumhara naam">
+    <textarea class="review-input" id="reviewText" placeholder="Is book ke baare mein apne vichar likho... Kya achha laga, kya nahi laga? 🌸"></textarea>
+    <button class="submit-review-btn" onclick="submitReview()">🌟 Review Submit Karo</button>
+  </div>
+
+  <!-- REVIEWS LIST -->
+  <div class="reviews-header">
+    <h3>💬 Sab Reviews (<span id="reviewCount">5</span>)</h3>
+    <select class="sort-select" onchange="sortReviews(this.value)">
+      <option value="new">Naye Pehle</option>
+      <option value="high">High Rating</option>
+      <option value="low">Low Rating</option>
+    </select>
+  </div>
+  <div id="reviewsList"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const starsEl=document.getElementById('stars');
+for(let i=0;i<80;i++){const s=document.createElement('div');s.className='star';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';s.style.animationDelay=Math.random()*3+'s';starsEl.appendChild(s);}
+
+// Rating bars
+const ratingData = [{stars:5,count:89},{stars:4,count:24},{stars:3,count:8},{stars:2,count:4},{stars:1,count:2}];
+const total = ratingData.reduce((a,b)=>a+b.count,0);
+const barsEl = document.getElementById('ratingBars');
+ratingData.forEach(r => {
+  const pct = Math.round(r.count/total*100);
+  barsEl.innerHTML += `
+    <div class="rating-bar-row">
+      <span class="stars-label">${r.stars}⭐</span>
+      <div class="rating-bar-track"><div class="rating-bar-fill" style="width:0%" data-w="${pct}%"></div></div>
+      <span class="count">${r.count}</span>
+    </div>`;
+});
+setTimeout(()=>{document.querySelectorAll('.rating-bar-fill').forEach(b=>b.style.width=b.dataset.w);},200);
+
+// Reviews data
+let reviews = [
+  {name:'Priya Sharma',avatar:'👩',stars:5,text:'Bahut hi sundar kahani hai! Ek baar shuru kiya toh band hi nahi kar saka. Bahut hi touching ending thi. Main zaroor apne friends ko recommend karungi.',date:'2 din pehle',helpful:24,verified:true},
+  {name:'Amit Verma',avatar:'👨',stars:5,text:'Zabardast likha hai! Characters itne real lagte hain. Writer ka writing style bahut hi unique hai. Next book ka wait kar raha hoon!',date:'5 din pehle',helpful:18,verified:true},
+  {name:'Sneha Gupta',avatar:'🧕',stars:4,text:'Kaafi achhi book hai. Story interesting hai lekin beech mein thodi slow ho jaati hai. Overall experience bahut achha raha.',date:'1 hafte pehle',helpful:9,verified:false},
+  {name:'Vikram Rao',avatar:'🧔',stars:5,text:'Ye meri abhi tak ki padhi best Hindi novel hai. Emotions bahut well capture kiye hain. Price ke hisaab se bilkul value for money!',date:'2 hafte pehle',helpful:31,verified:true},
+  {name:'Kavya Joshi',avatar:'👧',stars:3,text:'Story thik thi but mujhe jitni umeed thi utni achhi nahi lagi. Language acchi hai. Shayad doosri book better hogi.',date:'3 hafte pehle',helpful:5,verified:false},
+];
+
+let selectedRating = 0;
+
+function setRating(n) {
+  selectedRating = n;
+  document.querySelectorAll('#starSelect span').forEach((s,i)=>{
+    s.classList.toggle('active', i < n);
+  });
+}
+
+function renderReviews() {
+  document.getElementById('reviewCount').textContent = reviews.length;
+  document.getElementById('reviewsList').innerHTML = reviews.map((r,i) => `
+    <div class="review-card" style="animation-delay:${i*0.07}s">
+      <div class="review-top">
+        <div class="reviewer">
+          <div class="reviewer-avatar">${r.avatar}</div>
+          <div>
+            <div class="reviewer-name-disp">${r.name} ${r.verified?'<span class="verified-badge">✅ Verified</span>':''}</div>
+            <div class="reviewer-date">${r.date}</div>
+          </div>
+        </div>
+        <div class="review-stars">${'⭐'.repeat(r.stars)}</div>
+      </div>
+      <div class="review-text">${r.text}</div>
+      <div class="review-helpful">
+        <button class="helpful-btn" onclick="markHelpful(${i})">👍 Helpful (${r.helpful})</button>
+      </div>
+    </div>`).join('');
+}
+
+function sortReviews(val) {
+  if(val==='new') reviews.sort((a,b)=>0);
+  if(val==='high') reviews.sort((a,b)=>b.stars-a.stars);
+  if(val==='low') reviews.sort((a,b)=>a.stars-b.stars);
+  renderReviews();
+}
+
+function markHelpful(i) {
+  reviews[i].helpful++;
+  renderReviews();
+  showToast('👍 Thanks!');
+}
+
+function submitReview() {
+  const name = document.getElementById('reviewerName').value.trim();
+  const text = document.getElementById('reviewText').value.trim();
+  if(!selectedRating){alert('⭐ Rating do pehle!');return;}
+  if(!name){alert('👤 Apna naam daalo!');return;}
+  if(!text){alert('✍️ Review likho!');return;}
+  reviews.unshift({name,avatar:'😊',stars:selectedRating,text,date:'Abhi abhi',helpful:0,verified:false});
+  renderReviews();
+  document.getElementById('reviewerName').value='';
+  document.getElementById('reviewText').value='';
+  selectedRating=0;
+  document.querySelectorAll('#starSelect span').forEach(s=>s.classList.remove('active'));
+  showToast('🌟 Review submit ho gayi!');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+renderReviews();
+</script>
+</body>
+</html>
